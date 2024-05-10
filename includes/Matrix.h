@@ -4,9 +4,14 @@
 #include "Vector.h"
 
 namespace Liner {
-    
+
+    template<std::size_t M, std::size_t N, typename Field = int>
+    class MatrixElemIter;
+
     template<std::size_t M, std::size_t N, typename Field = int>
     class Matrix {
+        friend class MatrixElemIter<M, N, Field>;
+
     public:
         using data_t = std::array<Field, M * N>;
 
@@ -62,8 +67,8 @@ namespace Liner {
         }
 
         const Field &operator()(std::size_t i, std::size_t j) const {
-            std::size_t index = i * N + j;
-            if (index >= M * N) {
+            std::size_t index = i + j * M;
+            if (i >= M || j >= N) {
                 throw std::invalid_argument("invalid argument (i, j)");
             }
 
@@ -77,30 +82,14 @@ namespace Liner {
 
         Matrix operator+(const Matrix &other) const {
             Matrix res = other;
-            std::transform(data_.begin(), data_.end(), res.begin(), res.end(), std::plus<Field>{});
+            std::transform(data_.begin(), data_.end(), res.data_.begin(), res.data_.end(), std::plus<Field>{});
             return res;
         }
 
         Matrix operator*(const Field &scalar) {
             Matrix<M, N> res;
-            std::ranges::transform(data_, res.begin(), Details::multiply_by_scalar(scalar));
+            std::ranges::transform(data_, res.data_.begin(), Details::multiply_by_scalar(scalar));
             return res;
-        }
-
-        auto begin() {
-            return data_.begin();
-        }
-
-        auto end() {
-            return data_.end();
-        }
-
-        auto begin() const {
-            return data_.begin();
-        }
-
-        auto end() const {
-            return data_.end();
         }
 
     private:

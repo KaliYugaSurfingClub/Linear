@@ -1,6 +1,6 @@
 #include "bits/stdc++.h"
 
-#include "Matrix.h"
+#include "Ranges.h"
 
 using namespace std;
 using namespace Liner;
@@ -53,36 +53,36 @@ struct Test {
                 {10, 11, 12}
         };
 
-//        auto r = m.row(1);
-//        try {
-//            auto r1 = m.row(-1);
-//        } catch (exception &e){
-//            cout << e.what() << endl;
-//        }
-//
-//        try {
-//            auto r1 = m.row(3);
-//        } catch (exception &e){
-//            cout << e.what() << endl;
-//        }
-//
-//        auto c = m.column(1);
-//        try {
-//            auto c1 = m.column(-2);
-//            auto i{1};
-//        }
-//        catch (exception &e){
-//            cout << e.what() << endl;
-//        }
-//
-//        try {
-//            auto c1 = m.column(5);
-//            auto i{1};
-//            cout << i;
-//        }
-//        catch (exception &e){
-//            cout << e.what() << endl;
-//        }
+        auto r = m.row(1);
+        try {
+            auto r1 = m.row(-1);
+        } catch (exception &e){
+            cout << e.what() << endl;
+        }
+
+        try {
+            auto r1 = m.row(3);
+        } catch (exception &e){
+            cout << e.what() << endl;
+        }
+
+        auto c = m.column(1);
+        try {
+            auto c1 = m.column(-2);
+            auto i{1};
+        }
+        catch (exception &e){
+            cout << e.what() << endl;
+        }
+
+        try {
+            auto c1 = m.column(5);
+            auto i{1};
+            cout << i;
+        }
+        catch (exception &e){
+            cout << e.what() << endl;
+        }
 
         m(2, 3) = 1488;
         auto elem = m(2, 3);
@@ -117,14 +117,21 @@ struct Test {
     }
 };
 
-
 int main() {
-    vector<int> vec = {1, 2, 3};
-    set vec1(vec.begin(), vec.end());
 
-    Vector v = {1, 2, 3};
+    Matrix<3, 4, int> m {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
 
-    Vector<3> v1{vec.begin(), vec.end()};
+//    cout << m(0, 3) << endl;
+//
+    for (int item : MatrixRange(m)) {
+        cout << item << endl;
+    }
+
+    vector<int>::iterator v;
+//    copy(MatrixRange(m).begin(), MatrixRange(m).end(), back_inserter(v));
+//    transform(MatrixRange(m).begin(), MatrixRange(m).end(), v.begin(), [](int i) {
+//        return i * 88;
+//    });
 
     return 0;
 }
