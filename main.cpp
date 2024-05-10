@@ -35,8 +35,7 @@ struct Test {
         Vector<3> v2 = {4, 5, 6};
 
         auto v3 = v1 + v2;
-        auto v4 = 5 * v3;
-        auto v5 = v4 * 5;
+        auto v5 = v3 * 5;
 
         v5 *= 7;
 
@@ -121,21 +120,9 @@ int main() {
 
     Matrix<3, 4, int> m {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
 
-//    cout << m(0, 3) << endl;
-//
-//    for (int item : MatrixRange(m)) {
-//        cout << item << endl;
-//    }
-
-    int x = 10;
-    int &xref = x;
-
-    xref = const_cast<const int &>(xref);
-
-    xref = 11;
-
-//    MatrixElemIterConst i(m, 0);
-    MatrixElemIter i1(m, 0);
+    Test::vector_();
+    Test::vector_op();
+    Test::matrix_();
 
     for (int &item : MatrixRange(m)) {
         item = 88;
