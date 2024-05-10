@@ -123,15 +123,31 @@ int main() {
 
 //    cout << m(0, 3) << endl;
 //
-    for (int item : MatrixRange(m)) {
-        cout << item << endl;
+//    for (int item : MatrixRange(m)) {
+//        cout << item << endl;
+//    }
+
+    int x = 10;
+    int &xref = x;
+
+    xref = const_cast<const int &>(xref);
+
+    xref = 11;
+
+//    MatrixElemIterConst i(m, 0);
+    MatrixElemIter i1(m, 0);
+
+    for (int &item : MatrixRange(m)) {
+        item = 88;
     }
 
-    vector<int>::iterator v;
-//    copy(MatrixRange(m).begin(), MatrixRange(m).end(), back_inserter(v));
-//    transform(MatrixRange(m).begin(), MatrixRange(m).end(), v.begin(), [](int i) {
-//        return i * 88;
-//    });
+    Matrix<2, 2> m1;
+    vector<int> v{1, 4, 8, 8};
+    copy(v.begin(), v.end(), MatrixRange(m).begin());
+    copy(MatrixRange(m).begin(), MatrixRange(m).end(), back_inserter(v));
+    transform(MatrixRange(m).begin(), MatrixRange(m).end(), v.begin(), [](int i) {
+        return i * 88;
+    });
 
     return 0;
 }

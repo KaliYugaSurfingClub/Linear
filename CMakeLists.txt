@@ -6,4 +6,4 @@ set(CMAKE_CXX_STANDARD 20)
 include_directories(includes/)
 
 add_executable(liner_algebra main.cpp
-        Std.cpp)
+)

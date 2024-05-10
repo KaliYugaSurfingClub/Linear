@@ -5,37 +5,69 @@
 
 namespace Liner {
 
-    template<std::size_t M, std::size_t N, typename Field>
-    class MatrixElemIter : public std::iterator<std::contiguous_iterator_tag, const Field> {
+    template<typename T>
+    class MatrixElemIterBase : public std::iterator<std::contiguous_iterator_tag, T> {
     public:
-        using Matrix = Matrix<M, N, Field>;
+        explicit MatrixElemIterBase(std::size_t index) : index_(index) {}
 
-        MatrixElemIter(const Matrix &matrix, std::size_t index) : matrix_(matrix), index_(index) {}
-
-        bool operator!=(MatrixElemIter other) const {
+        bool operator!=(MatrixElemIterBase other) const {
             return index_ != other.index_;
         }
 
-        bool operator==(MatrixElemIter other) const {
+        bool operator==(MatrixElemIterBase other) const {
             return index_ == other.index_;
         }
 
-        MatrixElemIter &operator++() {
-            ++index_;
+        typename MatrixElemIterBase::difference_type operator-(const MatrixElemIterBase &other) {
+            return index_ - other.index_;
+        }
+
+    protected:
+        std::size_t index_;
+    };
+
+    template<std::size_t M, std::size_t N, typename Field>
+    class MatrixElemIterConst : public MatrixElemIterBase<Field> {
+    public:
+        using Matrix = Matrix<M, N, Field>;
+        using Base = MatrixElemIterBase<Field>;
+
+        MatrixElemIterConst(const Matrix &matrix, std::size_t index)
+        : MatrixElemIterBase<Field>(index), matrix_(matrix) {}
+
+        MatrixElemIterConst &operator++() {
+            ++Base::index_;
             return *this;
         }
 
-        const typename MatrixElemIter::reference &operator*() const {
-            return matrix_.data_[index_];
-        }
-
-        typename MatrixElemIter::difference_type operator-(const MatrixElemIter &other) {
-            return index_ - other.index_;
+        const typename MatrixElemIterConst::value_type &operator*() const {
+            return matrix_.data_[Base::index_];
         }
 
     private:
         const Matrix &matrix_;
-        std::size_t index_;
+    };
+
+    template<std::size_t M, std::size_t N, typename Field>
+    class MatrixElemIter : public MatrixElemIterBase<Field> {
+    public:
+        using Matrix = Matrix<M, N, Field>;
+        using Base = MatrixElemIterBase<Field>;
+
+        MatrixElemIter(Matrix &matrix, std::size_t index)
+        : MatrixElemIterBase<Field>(index), matrix_(matrix) {}
+
+        MatrixElemIter &operator++() {
+            ++Base::index_;
+            return *this;
+        }
+
+        typename MatrixElemIter::value_type &operator*() const {
+            return matrix_.data_[Base::index_];
+        }
+
+    private:
+        Matrix &matrix_;
     };
 
     template<std::size_t M, std::size_t N, typename Field = int>
@@ -43,7 +75,7 @@ namespace Liner {
     public:
         using Matrix = Matrix<M, N, Field>;
 
-        explicit MatrixRange(const Matrix &matrix, std::size_t start = 0, std::size_t finish = M * N)
+        explicit MatrixRange(Matrix &matrix, std::size_t start = 0, std::size_t finish = M * N)
                 : matrix_(matrix), start_(start), finish_(finish) {}
 
         auto begin() const {
@@ -55,7 +87,7 @@ namespace Liner {
         }
 
     private:
-        const Matrix &matrix_;
+        Matrix &matrix_;
         std::size_t start_;
         std::size_t finish_;
     };
