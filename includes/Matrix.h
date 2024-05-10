@@ -5,15 +5,11 @@
 
 namespace Liner {
 
-    template<std::size_t M, std::size_t N, typename Field = int>
-    class MatrixElemIterConst;
-
     template<std::size_t M, std::size_t N, typename Field>
     class MatrixElemIter;
 
     template<std::size_t M, std::size_t N, typename Field = int>
     class Matrix {
-        friend class MatrixElemIterConst<M, N, Field>;
         friend class MatrixElemIter<M, N, Field>;
 
     public:

@@ -10,6 +10,15 @@ namespace Liner::Details {
         };
     }
 
+    template
+
+    template<std::size_t M, typename Field>
+    class HandleMatrixColumn {
+
+    private:
+
+    };
+
 }
 
 
