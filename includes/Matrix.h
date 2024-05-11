@@ -6,7 +6,7 @@
 namespace Liner {
 
     template<std::size_t M, std::size_t N, typename Field>
-    class MatrixElemIter;
+    class MatrixRange;
 
     template<std::size_t M, std::size_t N, typename Field = int>
     class Matrix : public Details::Base_algebra_struct<Matrix<M, N, Field>, M * N, Field> {
@@ -15,8 +15,6 @@ namespace Liner {
         using Base = Details::Base_algebra_struct<Matrix<M, N, Field>, M * N, Field>;
 
         using Base::Base;
-
-        Matrix() = default;
 
         Matrix(std::initializer_list<Vector<M, Field>> list) {
             if (list.size() != N) {
@@ -68,7 +66,7 @@ namespace Liner {
             return const_cast<Field &>(ref);
         }
 
-    friend class MatrixElemIter<M, N, Field>;
+        friend class MatrixRange<M, N, Field>;
     };
 }
 

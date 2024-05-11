@@ -111,30 +111,12 @@ struct Test {
         } catch (exception &e) {
             cout << e.what() << endl;
         }
-
-        return;
     }
 };
 
 int main() {
-
+    Matrix<1, 1> m1;
     Matrix<3, 4, int> m {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
-
-    Test::vector_();
-    Test::vector_op();
-    Test::matrix_();
-
-    for (int &item : MatrixRange(m)) {
-        item = 88;
-    }
-
-    Matrix<2, 2> m1;
-    vector<int> v{1, 4, 8, 8};
-    copy(v.begin(), v.end(), MatrixRange(m).begin());
-    copy(MatrixRange(m).begin(), MatrixRange(m).end(), back_inserter(v));
-    transform(MatrixRange(m).begin(), MatrixRange(m).end(), v.begin(), [](int i) {
-        return i * 88;
-    });
 
     return 0;
 }

@@ -61,6 +61,8 @@ namespace Liner::Details {
             std::ranges::transform(data_, right.data_, data_.begin(), std::plus<value_type>{});
         }
 
+        virtual ~Base_algebra_struct() = default;
+
     protected:
         data_type data_{0};
     };

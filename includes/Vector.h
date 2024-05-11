@@ -19,6 +19,7 @@ namespace Liner {
         using iterator = Base::data_type::iterator;
         using const_iterator = Base::data_type::const_iterator;
 
+        Vector() = default;
         using Base::Base;
 
         const Field &operator[](size_t i) const {
