@@ -3,16 +3,21 @@
 
 #include "Vector.h"
 
-namespace Liner {
+namespace Linear {
 
     template<std::size_t M, std::size_t N, typename Field>
-    class MatrixRange;
+    class MatrixElmRange;
+
+    template<std::size_t M, std::size_t N, typename Field>
+    class ColumnRef;
 
     template<std::size_t M, std::size_t N, typename Field = int>
     class Matrix : public Details::Base_algebra_struct<Matrix<M, N, Field>, M * N, Field> {
+
+    using Base = Details::Base_algebra_struct<Matrix<M, N, Field>, M * N, Field>;
+
     public:
         using value_type = Field;
-        using Base = Details::Base_algebra_struct<Matrix<M, N, Field>, M * N, Field>;
 
         using Base::Base;
 
@@ -28,15 +33,19 @@ namespace Liner {
             }
         }
 
+        ColumnRef<M, N, Field> column_ref(std::size_t index) {
+            return {*this, index};
+        }
+
         //todo extract
         Vector<M, Field> column(std::size_t index) {
             if (index >= N) {
                 throw std::out_of_range("out_of_range get column");
             }
 
-            Vector<M, Field> res;
-            std::copy_n(std::next(Base::data_.begin(), M * index), M, res.begin());
-            return res;
+            auto begin = std::next(Base::data_.begin(), M * index);
+            auto end = std::next(begin, M * index);
+            return {begin, end};
         }
 
         //todo extract
@@ -66,7 +75,7 @@ namespace Liner {
             return const_cast<Field &>(ref);
         }
 
-        friend class MatrixRange<M, N, Field>;
+        friend class MatrixElmRange<M, N, Field>;
     };
 }
 

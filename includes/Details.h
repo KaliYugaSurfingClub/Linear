@@ -1,7 +1,7 @@
 #ifndef LINER_ALGEBRA_DETAILS_H
 #define LINER_ALGEBRA_DETAILS_H
 
-namespace Liner::Details {
+namespace Linear::Details {
 
     template<typename T>
     auto multiply_by_scalar(const T &scalar) {
@@ -64,7 +64,7 @@ namespace Liner::Details {
         virtual ~Base_algebra_struct() = default;
 
     protected:
-        data_type data_{0};
+        data_type data_{T{0}};
     };
 
 }

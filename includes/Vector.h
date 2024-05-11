@@ -9,7 +9,7 @@
 
 #include "Details.h"
 
-namespace Liner {
+namespace Linear {
 
     template<std::size_t M, typename Field = int>
     class Vector : public Details::Base_algebra_struct<Vector<M, Field>, M, Field> {
@@ -19,7 +19,6 @@ namespace Liner {
         using iterator = Base::data_type::iterator;
         using const_iterator = Base::data_type::const_iterator;
 
-        Vector() = default;
         using Base::Base;
 
         const Field &operator[](size_t i) const {
