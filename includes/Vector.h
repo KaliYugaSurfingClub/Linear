@@ -11,8 +11,6 @@
 
 namespace Linear {
 
-    template<std::size_t M, std::size_t N, typename Field>
-    class ColumnRef;
 
     template<std::size_t M, typename Field = int>
     class Vector : public Base_algebra_struct<Vector<M, Field>, M, Field> {
@@ -27,8 +25,8 @@ namespace Linear {
         using Base::Base;
 
         //no explicit временно
-        template<std::size_t Ref_N>
-        Vector(ColumnRef<M, Ref_N, Field> ref) : Vector(ref.begin(), ref.end()) {}
+//        template<std::size_t Ref_N>
+//        Vector(ColumnRef<M, Ref_N, Field> ref) : Vector(ref.begin(), ref.end()) {}
 
         const Field &operator[](size_t i) const {
             if (i >= M) {
@@ -69,8 +67,8 @@ namespace Linear {
         return std::inner_product(left.begin(), left.end(), right.begin(), Filed(0));
     }
 
-//    template<typename Head, typename ...T>
-//    Vector(Head, T...) -> Vector<sizeof...(T) + 1, Head>;
+    template<typename Head, typename ...T>
+    Vector(Head, T...) -> Vector<sizeof...(T) + 1, Head>;
 }
 
 #endif //LINER_ALGEBRA_VECTOR_H

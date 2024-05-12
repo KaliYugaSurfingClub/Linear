@@ -11,11 +11,12 @@ namespace Linear::Details {
         };
     }
 
+    //todo array не работает с jump iterator, переделать
     template<typename Derived, std::size_t Size, typename Field>
     class Base_algebra_struct {
     public:
         using value_type = Field;
-        using data_type = std::array<Field, Size>;
+        using data_type = std::vector<Field>;
 
         Base_algebra_struct() = default;
 
@@ -57,7 +58,7 @@ namespace Linear::Details {
         Derived operator-(const Derived &right) const {
             Derived res;
             std::ranges::transform(data_, right.data_, res.begin(), std::minus<value_type>{});
-            return res;;
+            return res;
         }
 
         void operator*=(const value_type &scalar) {
@@ -75,7 +76,7 @@ namespace Linear::Details {
         virtual ~Base_algebra_struct() = default;
 
     protected:
-        data_type data_{Field{0}};
+        data_type data_ = data_type(Size, Field{0});
     };
 
 }

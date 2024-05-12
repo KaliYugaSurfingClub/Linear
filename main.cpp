@@ -9,9 +9,14 @@ using namespace Linear;
 int main() {
     Matrix<3, 5> m {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
-    for (int i = 0; i < 3; ++i) {
-        for (auto j : m.row_copy(i)) {
-            cout << j << " ";
+    vector v{1, 2, 3, 4, 5};
+    copy(m.row_ref(0).begin(),  m.row_ref(0).end(), m.row_ref(1).begin());
+
+    Vector<5> vv = v + m.row_ref(1);
+
+    for (RowRef r : MatrixRowRange(m)) {
+        for (int item : r) {
+            cout << item << " ";
         }
         cout << endl;
     }
