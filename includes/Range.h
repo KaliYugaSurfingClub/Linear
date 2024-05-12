@@ -7,6 +7,7 @@
 namespace Linear {
 
     //todo CONST ITERATORS!
+    //ранж теперь может мутировать константу
 
     namespace Details {
 
@@ -52,7 +53,6 @@ namespace Linear {
     }
 
 
-
     template<std::size_t M, std::size_t N, typename Field>
     class MatrixElmRange : public Details::MatrixRangeBase<M, N, Field> {
 
@@ -64,8 +64,8 @@ namespace Linear {
         using difference_type = std::ptrdiff_t;
         using iterator = Matrix::data_type::iterator;
 
-        explicit MatrixElmRange(Matrix &matrix, std::size_t start = 0, std::size_t finish = M * N)
-        : Base(matrix, start, finish) {}
+        explicit MatrixElmRange(const Matrix &matrix, std::size_t start = 0, std::size_t finish = M * N)
+        : Base(const_cast<Matrix &>(matrix), start, finish) {}
 
         iterator begin() const {
             return std::next(Base::matrix_.data_.begin(), Base::start_);
@@ -88,8 +88,8 @@ namespace Linear {
         using Matrix = Matrix<M, N, Field>;
         using iterator = ColumnIterator;
 
-        explicit MatrixColRange(Matrix &matrix, std::size_t start = 0, std::size_t finish = N)
-                : BaseRange(matrix, start, finish) {}
+        explicit MatrixColRange(const Matrix &matrix, std::size_t start = 0, std::size_t finish = N)
+        : BaseRange(const_cast<Matrix &>(matrix), start, finish) {}
 
         iterator begin() const {
             return {BaseRange::matrix_, BaseRange::start_};
@@ -133,8 +133,8 @@ namespace Linear {
         using Matrix = Matrix<M, N, Field>;
         using iterator = RowIterator;
 
-        explicit MatrixRowRange(Matrix &matrix, std::size_t start = 0, std::size_t finish = M)
-        : BaseRange(matrix, start, finish) {}
+        explicit MatrixRowRange(const Matrix &matrix, std::size_t start = 0, std::size_t finish = M)
+        : BaseRange(const_cast<Matrix &>(matrix), start, finish) {}
 
         iterator begin() const {
             return {BaseRange::matrix_, BaseRange::start_};

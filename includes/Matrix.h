@@ -83,6 +83,9 @@ namespace Linear {
 
         friend class MatrixElmRange<M, N, Field>;
     };
+
+//    template<std::size_t M, typename Field, typename ...Args>
+//    Matrix(Vector<M, Field>, Args...) -> Matrix<M, sizeof...(Args) + 1, Field>;
 }
 
 #endif //LINER_ALGEBRA_MATRIX_H
