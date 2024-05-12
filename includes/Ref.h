@@ -3,6 +3,7 @@
 
 #include "Vector.h"
 #include "Range.h"
+#include "jump_iterator.h"
 
 namespace Linear {
 
@@ -15,7 +16,7 @@ namespace Linear {
             using Vector = Vector<M, Field>;
 
             MatrixRefBase(Iterator begin, Iterator end, std::size_t index)
-            : begin_(begin), end_(end), index_(index) {}
+                    : begin_(begin), end_(end), index_(index) {}
 
             Field &operator[](std::size_t index) {
                 return *std::next(begin_, index);
@@ -45,27 +46,26 @@ namespace Linear {
     }
 
 
+    template<std::size_t M, std::size_t N, typename Field>
+    class RowRef : public Details::MatrixRefBase<std::jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, M, N, Field> {
 
-//    template<std::size_t M, std::size_t N, typename Field>
-//    class RowRef : public Details::MatrixRefBase<jump_iterator<Field>, M, N, Field> {
-//
-//    using Base = Details::MatrixRefBase<jump_iterator<Field>, M, N, Field>;
-//
-//    public:
-//        using Matrix = Matrix<M, N, Field>;
-//        using Vector = Vector<M, Field>;
-//
-//        RowRef(Matrix &ref, std::size_t index) : Base(
-//                jump_iterator(MatrixElmRange(ref).begin() + index, M),
-//                jump_iterator(MatrixElmRange(ref).end() - M + index, M),
-//                index
-//        ) {}
-//
-//        RowRef &operator=(const Vector &vector) {
-//            std::ranges::copy(vector, Base::begin_);
-//            return *this;
-//        }
-//    };
+    using Base = Details::MatrixRefBase<std::jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, M, N, Field>;
+
+    public:
+        using Matrix = Matrix<M, N, Field>;
+        using Vector = Vector<M, Field>;
+
+        RowRef(Matrix &ref, std::size_t index) : Base(
+                std::jump_iterator(MatrixElmRange(ref).begin() + index, M),
+                std::jump_iterator(MatrixElmRange(ref).end() - M + index, M),
+                index
+        ) {}
+
+        RowRef &operator=(const Vector &vector) {
+            std::copy(vector.begin(), vector.end(), Base::begin_);
+            return *this;
+        }
+    };
 
 
     template<std::size_t M, std::size_t N, typename Field>
@@ -88,6 +88,7 @@ namespace Linear {
             return *this;
         }
     };
+
 }
 
 #endif //LINER_ALGEBRA_COLUMNREF_H

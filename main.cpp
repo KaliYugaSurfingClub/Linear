@@ -115,13 +115,15 @@ struct Test {
 };
 
 int main() {
+    vector<int> v(10, 10);
+
     Matrix<3, 4, int> m {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
     Matrix<3, 4, int> m1 {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
 
 
-    for (auto column_ref : MatrixColRange(m)) {
+    for (auto column_ref : MatrixRowRange(m)) {
         if (std::accumulate(column_ref.begin(), column_ref.end(), 0) == 6) {
-            column_ref *= 10;
+            cout << 123;
         } else {
             column_ref = Vector{1, 2, 3};
         }
@@ -163,7 +165,7 @@ int main() {
 //        row *= 2;
 //    }
 
-
+    list<int> l;
 
     return 0;
 }

@@ -14,7 +14,7 @@ namespace Linear::Details {
     class Base_algebra_struct {
     public:
         using value_type = T;
-        using data_type = std::array<T, Size>;
+        using data_type = std::vector<T>;
 
         Base_algebra_struct() = default;
 
@@ -64,7 +64,7 @@ namespace Linear::Details {
         virtual ~Base_algebra_struct() = default;
 
     protected:
-        data_type data_{T{0}};
+        data_type data_ = std::vector<T>(Size, T{0});
     };
 
 }
