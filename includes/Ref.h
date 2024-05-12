@@ -56,9 +56,9 @@ namespace Linear {
 
     public:
         RowRef(Matrix<M, N, Field> &ref, std::size_t index) : Base(
-                jump_iterator(MatrixElmRange(ref).begin() + index, M),
-                jump_iterator(MatrixElmRange(ref).end() + index, M),
-                index
+            jump_iterator(MatrixElmRange(ref).begin() + index, M),
+            jump_iterator(MatrixElmRange(ref).end() + index, M),
+            index
         ) {}
     };
 
@@ -70,9 +70,9 @@ namespace Linear {
 
     public:
         ColumnRef(Matrix <M, N, Field> &ref, std::size_t index) : Base(
-                MatrixElmRange(ref).begin() + index * M,
-                MatrixElmRange(ref).begin() + index * M + M,
-                index
+            MatrixElmRange(ref).begin() + index * M,
+            MatrixElmRange(ref).begin() + index * M + M,
+            index
         ) {}
     };
 

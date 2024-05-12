@@ -7,14 +7,14 @@
 #include <numeric>
 #include <utility>
 
-#include "Base_algebra_struct.h"
+#include "BaseAlgebraStruct.h"
 
 namespace Linear {
 
     template<std::size_t M, typename Field = int>
-    class Vector : public Base_algebra_struct<Vector<M, Field>, M, Field> {
+    class Vector : public BaseAlgebraStruct<Vector<M, Field>, M, Field> {
 
-    using Base = Base_algebra_struct<Vector<M, Field>, M, Field>;
+    using Base = BaseAlgebraStruct<Vector<M, Field>, M, Field>;
 
     public:
         using value_type = Field;

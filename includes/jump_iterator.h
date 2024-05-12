@@ -2,7 +2,7 @@
 #define LINEAR_ALGEBRA_JUMP_ITERATOR_H
 
 #include "iterator"
-#include "Base_algebra_struct.h"
+#include "BaseAlgebraStruct.h"
 
 namespace Linear::Details {
 

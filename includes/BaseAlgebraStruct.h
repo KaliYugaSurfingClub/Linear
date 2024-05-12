@@ -11,17 +11,17 @@ namespace Linear::Details {
         };
     }
 
-    //todo array не работает с jump iterator, переделать
+    //todo array не работает с jump iterator, переделать (работает только vector)
     template<typename Derived, std::size_t Size, typename Field>
-    class Base_algebra_struct {
+    class BaseAlgebraStruct {
     public:
         using value_type = Field;
         using data_type = std::vector<Field>;
 
-        Base_algebra_struct() = default;
+        BaseAlgebraStruct() = default;
 
         template<typename Iter>
-        Base_algebra_struct(Iter begin, const Iter &end) {
+        BaseAlgebraStruct(Iter begin, const Iter &end) {
             if (std::distance(begin, end) != Size) {
                 throw std::invalid_argument("too many or too few arguments in base algebra struct");
             }
@@ -29,17 +29,17 @@ namespace Linear::Details {
         }
 
         template<typename Range>
-        explicit Base_algebra_struct(const Range &range)
-        : Base_algebra_struct(std::begin(range), std::end(range)) {}
+        explicit BaseAlgebraStruct(const Range &range)
+        : BaseAlgebraStruct(std::begin(range), std::end(range)) {}
 
-        Base_algebra_struct(std::initializer_list<value_type> list)
-        : Base_algebra_struct(list.begin(), list.end()) {}
+        BaseAlgebraStruct(std::initializer_list<value_type> list)
+        : BaseAlgebraStruct(list.begin(), list.end()) {}
 
-        bool operator==(const Base_algebra_struct &other) const {
+        bool operator==(const BaseAlgebraStruct &other) const {
             return data_ == other.data_;
         }
 
-        bool operator!=(const Base_algebra_struct &other) const {
+        bool operator!=(const BaseAlgebraStruct &other) const {
             return data_ != other.data_;
         }
 
@@ -73,7 +73,7 @@ namespace Linear::Details {
             std::ranges::transform(data_, right.data_, data_.begin(), std::minus<value_type>{});
         }
 
-        virtual ~Base_algebra_struct() = default;
+        virtual ~BaseAlgebraStruct() = default;
 
     protected:
         data_type data_ = data_type(Size, Field{0});

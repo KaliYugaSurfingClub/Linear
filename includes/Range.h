@@ -77,8 +77,6 @@ namespace Linear {
     };
 
 
-
-
     template<std::size_t M, std::size_t N, typename Field>
     class MatrixColRange : public Details::MatrixRangeBase<M, N, Field> {
 
@@ -123,8 +121,6 @@ namespace Linear {
             }
         };
     };
-
-
 
 
     template<std::size_t M, std::size_t N, typename Field>

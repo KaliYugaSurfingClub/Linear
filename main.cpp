@@ -24,6 +24,14 @@ int main() {
     Vector<3, int> v1 {1, 2, 3};
     Vector<3, int> v2 {2, 3, 4};
 
+    MatrixRowRange range(m);
+    RowRef r = m.row_ref(1);
+
+    Matrix m1 {
+            {1, 2},
+            {1, 2}
+    };
+
     auto v3 = v1 + v2;
 
     return 0;
