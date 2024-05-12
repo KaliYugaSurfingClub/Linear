@@ -7,7 +7,7 @@
 #include <numeric>
 #include <utility>
 
-#include "Details.h"
+#include "Base_algebra_struct.h"
 
 namespace Linear {
 
@@ -15,16 +15,18 @@ namespace Linear {
     class ColumnRef;
 
     template<std::size_t M, typename Field = int>
-    class Vector : public Details::Base_algebra_struct<Vector<M, Field>, M, Field> {
+    class Vector : public Base_algebra_struct<Vector<M, Field>, M, Field> {
+
+    using Base = Base_algebra_struct<Vector<M, Field>, M, Field>;
+
     public:
         using value_type = Field;
-        using Base = Details::Base_algebra_struct<Vector<M, Field>, M, Field>;
         using iterator = Base::data_type::iterator;
         using const_iterator = Base::data_type::const_iterator;
 
         using Base::Base;
 
-        //for no explicit
+        //no explicit временно
         template<std::size_t Ref_N>
         Vector(ColumnRef<M, Ref_N, Field> ref) : Vector(ref.begin(), ref.end()) {}
 
@@ -67,8 +69,8 @@ namespace Linear {
         return std::inner_product(left.begin(), left.end(), right.begin(), Filed(0));
     }
 
-    template<typename Head, typename ...T>
-    Vector(Head, T...) -> Vector<sizeof...(T) + 1, Head>;
+//    template<typename Head, typename ...T>
+//    Vector(Head, T...) -> Vector<sizeof...(T) + 1, Head>;
 }
 
 #endif //LINER_ALGEBRA_VECTOR_H

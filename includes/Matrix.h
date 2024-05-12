@@ -11,13 +11,14 @@ namespace Linear {
     template<std::size_t M, std::size_t N, typename Field>
     class ColumnRef;
 
-//    template<std::size_t M, std::size_t N, typename Field>
-//    class RowRef;
+    template<std::size_t M, std::size_t N, typename Field>
+    class RowRef;
+
 
     template<std::size_t M, std::size_t N, typename Field = int>
-    class Matrix : public Details::Base_algebra_struct<Matrix<M, N, Field>, M * N, Field> {
+    class Matrix : public Base_algebra_struct<Matrix<M, N, Field>, M * N, Field> {
 
-    using Base = Details::Base_algebra_struct<Matrix<M, N, Field>, M * N, Field>;
+    using Base = Base_algebra_struct<Matrix<M, N, Field>, M * N, Field>;
 
     public:
         using value_type = Field;
@@ -40,14 +41,13 @@ namespace Linear {
             return {*this, index};
         }
 
-//        RowRef<M, N, Field> row_ref(std::size_t index) {
-//            return {*this, index};
-//        }
+        RowRef<M, N, Field> row_ref(std::size_t index) {
+            return {*this, index};
+        }
 
-        //todo extract
-        Vector<M, Field> column(std::size_t index) {
+        Vector<M, Field> column_copy(std::size_t index) {
             if (index >= N) {
-                throw std::out_of_range("out_of_range get column");
+                throw std::out_of_range("out_of_range get column_copy");
             }
 
             auto begin = std::next(Base::data_.begin(), M * index);
@@ -55,15 +55,13 @@ namespace Linear {
             return {begin, end};
         }
 
-        //todo extract
-        Vector<N, Field> row(std::size_t index) {
+        Vector<N, Field> row_copy(std::size_t index) {
             if (index >= M) {
-                throw std::out_of_range("out_of_range in get row");
+                throw std::out_of_range("out_of_range in get row_copy");
             }
 
             Vector<N, Field> res;
             for (std::size_t i = 0; i < N; ++i) {
-                //todo возможно не та формула
                 res[i] = Base::data_[i * M + index];
             }
             return res;
