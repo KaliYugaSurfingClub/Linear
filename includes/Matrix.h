@@ -11,8 +11,8 @@ namespace Linear {
     template<std::size_t M, std::size_t N, typename Field>
     class ColumnRef;
 
-    template<std::size_t M, std::size_t N, typename Field>
-    class RowRef;
+//    template<std::size_t M, std::size_t N, typename Field>
+//    class RowRef;
 
     template<std::size_t M, std::size_t N, typename Field = int>
     class Matrix : public Details::Base_algebra_struct<Matrix<M, N, Field>, M * N, Field> {
@@ -40,6 +40,10 @@ namespace Linear {
             return {*this, index};
         }
 
+//        RowRef<M, N, Field> row_ref(std::size_t index) {
+//            return {*this, index};
+//        }
+
         //todo extract
         Vector<M, Field> column(std::size_t index) {
             if (index >= N) {
@@ -59,6 +63,7 @@ namespace Linear {
 
             Vector<N, Field> res;
             for (std::size_t i = 0; i < N; ++i) {
+                //todo возможно не та формула
                 res[i] = Base::data_[i * M + index];
             }
             return res;

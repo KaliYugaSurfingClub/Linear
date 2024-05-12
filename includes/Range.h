@@ -93,7 +93,7 @@ namespace Linear {
         explicit MatrixColRange(Matrix &matrix, std::size_t start = 0, std::size_t finish = N)
                 : BaseRange(matrix, start, finish) {}
 
-        ColumnIterator begin() const {
+        iterator begin() const {
             return {BaseRange::matrix_, BaseRange::start_};
         }
 
@@ -127,50 +127,49 @@ namespace Linear {
 
 
 
-    template<std::size_t M, std::size_t N, typename Field>
-    class MatrixRowRange : public Details::MatrixRangeBase<M, N, Field> {
-
-    using BaseRange = Details::MatrixRangeBase<M, N, Field>;
-
-    class RowIterator;
-
-    public:
-        using Matrix = Matrix<M, N, Field>;
-        using iterator = RowIterator;
-
-        explicit MatrixRowRange(Matrix &matrix, std::size_t start = 0, std::size_t finish = M)
-        : BaseRange(matrix, start, finish) {}
-
-        iterator begin() const {
-            return {BaseRange::matrix_, BaseRange::start_};
-        }
-
-        iterator end() const {
-            return {BaseRange::matrix_, BaseRange::finish_};
-        }
-
-    private:
-        class RowIterator : public Details::MatrixIteratorBase<RowIterator, M, N, Field> {
-
-        using BaseIterator = Details::MatrixIteratorBase<RowIterator, M, N, Field>;
-
-        public:
-            using value_type = RowRef<M, N, Field>;
-            using iterator_category = BaseIterator::iterator_category;
-            using difference_type = BaseIterator::difference_type;
-
-            RowIterator(Matrix &matrix, std::size_t index) : BaseIterator(matrix, index) {}
-
-            RowIterator &operator++() {
-                ++RowIterator::index_;
-                return *this;
-            }
-
-            value_type operator*() {
-                return {BaseIterator::matrix_, BaseIterator::index_};
-            }
-        };
-    };
+//    template<std::size_t M, std::size_t N, typename Field>
+//    class MatrixRowRange : public Details::MatrixRangeBase<M, N, Field> {
+//
+//    using BaseRange = Details::MatrixRangeBase<M, N, Field>;
+//    class RowIterator;
+//
+//    public:
+//        using Matrix = Matrix<M, N, Field>;
+//        using iterator = RowIterator;
+//
+//        explicit MatrixRowRange(Matrix &matrix, std::size_t start = 0, std::size_t finish = M)
+//        : BaseRange(matrix, start, finish) {}
+//
+//        iterator begin() const {
+//            return {BaseRange::matrix_, BaseRange::start_};
+//        }
+//
+//        iterator end() const {
+//            return {BaseRange::matrix_, BaseRange::finish_};
+//        }
+//
+//    private:
+//        class RowIterator : public Details::MatrixIteratorBase<RowIterator, M, N, Field> {
+//
+//        using BaseIterator = Details::MatrixIteratorBase<RowIterator, M, N, Field>;
+//
+//        public:
+//            using value_type = RowRef<M, N, Field>;
+//            using iterator_category = BaseIterator::iterator_category;
+//            using difference_type = BaseIterator::difference_type;
+//
+//            RowIterator(Matrix &matrix, std::size_t index) : BaseIterator(matrix, index) {}
+//
+//            RowIterator &operator++() {
+//                ++RowIterator::index_;
+//                return *this;
+//            }
+//
+//            value_type operator*() {
+//                return {BaseIterator::matrix_, BaseIterator::index_};
+//            }
+//        };
+//    };
 }
 
 #endif //LINER_ALGEBRA_RANGE_H
