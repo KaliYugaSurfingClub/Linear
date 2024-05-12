@@ -11,7 +11,6 @@
 
 namespace Linear {
 
-
     template<std::size_t M, typename Field = int>
     class Vector : public Base_algebra_struct<Vector<M, Field>, M, Field> {
 
@@ -23,10 +22,6 @@ namespace Linear {
         using const_iterator = Base::data_type::const_iterator;
 
         using Base::Base;
-
-        //no explicit временно
-//        template<std::size_t Ref_N>
-//        Vector(ColumnRef<M, Ref_N, Field> ref) : Vector(ref.begin(), ref.end()) {}
 
         const Field &operator[](size_t i) const {
             if (i >= M) {
