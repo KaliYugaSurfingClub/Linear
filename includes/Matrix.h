@@ -11,6 +11,9 @@ namespace Linear {
     template<std::size_t M, std::size_t N, typename Field>
     class ColumnRef;
 
+    template<std::size_t M, std::size_t N, typename Field>
+    class RowRef;
+
     template<std::size_t M, std::size_t N, typename Field = int>
     class Matrix : public Details::Base_algebra_struct<Matrix<M, N, Field>, M * N, Field> {
 

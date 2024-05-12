@@ -3,6 +3,6 @@ project(linear_algebra)
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(includes/)
+include_directories(includes)
 
 add_executable(linear_algebra main.cpp)

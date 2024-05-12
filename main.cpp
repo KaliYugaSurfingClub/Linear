@@ -1,9 +1,9 @@
 #include "bits/stdc++.h"
 
-#include "Ranges.h"
+#include "Range.h"
 
 using namespace std;
-using namespace Liner;
+using namespace Linear;
 
 struct Test {
     static void vector_() {
