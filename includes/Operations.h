@@ -22,6 +22,16 @@ namespace Linear {
         return res;
     }
 
+    template<size_t M, typename Field = int>
+    Vector<M, Field> vector_product(const Vector<M, Field> &left, const Vector<M, Field> &right) {
+
+    }
+
+    template<size_t M, typename Filed = int>
+    Filed scalar_product(const Vector<M, Filed> &left, const Vector<M, Filed> &right) {
+        return std::inner_product(left.begin(), left.end(), right.begin(), Filed(0));
+    }
+
 }
 
 #endif //LINEAR_ALGEBRA_OPERATIONS_H

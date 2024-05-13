@@ -7,7 +7,6 @@
 
 //todo операции между вектором и ссылкой на часть матрицы
 
-
 namespace Linear {
 
     template<typename Iterator, typename Field, std::size_t VectorSize>

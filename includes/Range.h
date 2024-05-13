@@ -4,10 +4,10 @@
 #include "Matrix.h"
 #include "Ref.h"
 
-namespace Linear {
+//todo CONST ITERATORS!
+//ранж теперь может мутировать константу
 
-    //todo CONST ITERATORS!
-    //ранж теперь может мутировать константу
+namespace Linear {
 
     namespace Details {
 

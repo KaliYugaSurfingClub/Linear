@@ -2,6 +2,8 @@
 #define LINER_ALGEBRA_MATRIX_H
 
 #include "Vector.h"
+#include "Helpers.h"
+#include "Permutation.h"
 
 namespace Linear {
 
@@ -79,6 +81,26 @@ namespace Linear {
         Field &operator()(std::size_t i, std::size_t j) {
             const Field &ref = std::as_const(*this)(i, j);
             return const_cast<Field &>(ref);
+        }
+
+        //todo передалать отдельный класс с перестановками
+        std::enable_if_t<M == N, Field> det() const {
+            std::vector<std::size_t> permutation(M);
+            std::ranges::iota(permutation, 0);
+            short sign = get_sign_of_permutation(permutation);
+
+            Field res = 0;
+
+            do {
+                Field product_of_permutation = 1;
+                sign = get_sign_of_permutation(permutation);
+                for (std::size_t i = 0; i < permutation.size(); ++i) {
+                    product_of_permutation *= (*this)(i, permutation[i]);
+                }
+                res += product_of_permutation * sign;
+            } while (std::next_permutation(permutation.begin(), permutation.end()));
+
+            return res;
         }
 
         friend class MatrixElmRange<M, N, Field>;

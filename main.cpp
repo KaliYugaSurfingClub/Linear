@@ -52,8 +52,9 @@ int main() {
 //        cout << endl;
 //    }
 
-    const Matrix<3, 3> mmm;
-    f(mmm);
+    Matrix<3, 3> m1{-2, 1, 2, 1, 3, 4, 1, -5, 5};
+
+    cout << m1.det() << endl;
 
     return 0;
 }

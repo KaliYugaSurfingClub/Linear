@@ -4,13 +4,6 @@
 
 namespace Linear::Details {
 
-    template<typename T>
-    auto multiply_by_scalar(const T &scalar) {
-        return [&scalar](const T &item) {
-            return scalar * item;
-        };
-    }
-
     //todo array не работает с jump iterator, переделать (работает только vector)
     template<typename Derived, std::size_t Size, typename Field>
     class BaseAlgebraStruct {
@@ -45,7 +38,7 @@ namespace Linear::Details {
 
         Derived operator*(const value_type &scalar) const {
             Derived res;
-            std::ranges::transform(data_, res.begin(), Details::multiply_by_scalar(scalar));
+            std::ranges::transform(data_, res.begin(), multiply_by_scalar(scalar));
             return res;
         }
 
@@ -62,7 +55,7 @@ namespace Linear::Details {
         }
 
         void operator*=(const value_type &scalar) {
-            std::ranges::transform(data_, data_.begin(), Details::multiply_by_scalar(scalar));
+            std::ranges::transform(data_, data_.begin(), multiply_by_scalar(scalar));
         }
 
         void operator+=(const Derived &right) {
@@ -73,9 +66,9 @@ namespace Linear::Details {
             std::ranges::transform(data_, right.data_, data_.begin(), std::minus<value_type>{});
         }
 
+    protected:
         virtual ~BaseAlgebraStruct() = default;
 
-    protected:
         data_type data_ = data_type(Size, Field{0});
     };
 
