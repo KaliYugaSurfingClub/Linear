@@ -54,9 +54,9 @@ namespace Linear {
 
 
     template<std::size_t M, std::size_t N, typename Field>
-    class MatrixElmRange : public Details::MatrixRangeBase<M, N, Field> {
+    class MatrixElmRange : public MatrixRangeBase<M, N, Field> {
 
-    using Base = Details::MatrixRangeBase<M, N, Field>;
+    using Base = MatrixRangeBase<M, N, Field>;
 
     public:
         using Matrix = Matrix<M, N, Field>;
@@ -78,9 +78,9 @@ namespace Linear {
 
 
     template<std::size_t M, std::size_t N, typename Field>
-    class MatrixColRange : public Details::MatrixRangeBase<M, N, Field> {
+    class MatrixColRange : public MatrixRangeBase<M, N, Field> {
 
-    using BaseRange = Details::MatrixRangeBase<M, N, Field>;
+    using BaseRange = MatrixRangeBase<M, N, Field>;
 
     class ColumnIterator;
 
@@ -100,9 +100,9 @@ namespace Linear {
         }
 
     private:
-        class ColumnIterator : public Details::MatrixIteratorBase<ColumnIterator, M, N, Field> {
+        class ColumnIterator : public MatrixIteratorBase<ColumnIterator, M, N, Field> {
 
-        using BaseIterator = Details::MatrixIteratorBase<ColumnIterator, M, N, Field>;
+        using BaseIterator = MatrixIteratorBase<ColumnIterator, M, N, Field>;
 
         public:
             using value_type = ColumnRef<M, N, Field>;
@@ -124,9 +124,9 @@ namespace Linear {
 
 
     template<std::size_t M, std::size_t N, typename Field>
-    class MatrixRowRange : public Details::MatrixRangeBase<M, N, Field> {
+    class MatrixRowRange : public MatrixRangeBase<M, N, Field> {
 
-    using BaseRange = Details::MatrixRangeBase<M, N, Field>;
+    using BaseRange = MatrixRangeBase<M, N, Field>;
     class RowIterator;
 
     public:
@@ -145,9 +145,9 @@ namespace Linear {
         }
 
     private:
-        class RowIterator : public Details::MatrixIteratorBase<RowIterator, M, N, Field> {
+        class RowIterator : public MatrixIteratorBase<RowIterator, M, N, Field> {
 
-        using BaseIterator = Details::MatrixIteratorBase<RowIterator, M, N, Field>;
+        using BaseIterator = MatrixIteratorBase<RowIterator, M, N, Field>;
 
         public:
             using value_type = RowRef<M, N, Field>;

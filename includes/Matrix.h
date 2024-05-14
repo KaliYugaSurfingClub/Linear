@@ -54,7 +54,7 @@ namespace Linear {
             return {*this, index};
         }
 
-        Vector<M, Field> column_copy(std::size_t index) {
+        Vector<M, Field> column_copy(std::size_t index) const {
             if (index >= N) {
                 throw std::out_of_range("out_of_range get column_copy");
             }
@@ -64,7 +64,7 @@ namespace Linear {
             return {begin, end};
         }
 
-        Vector<N, Field> row_copy(std::size_t index) {
+        Vector<N, Field> row_copy(std::size_t index) const {
             if (index >= M) {
                 throw std::out_of_range("out_of_range in get row_copy");
             }
@@ -109,7 +109,6 @@ namespace Linear {
         static Matrix<M, M, Field> identity() {
             Matrix<M, M, Field> res;
             std::fill_n(jump_iterator(MatrixElmRange(res).begin(), M + 1), M, 1);
-//            std::fill(jump_iterator(MatrixElmRange(res).begin(), M + 1), MatrixElmRange(res).end(), 1);
             return res;
         }
 

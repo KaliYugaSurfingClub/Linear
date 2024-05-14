@@ -53,11 +53,11 @@ int main() {
 //        cout << endl;
 //    }
 //
-//    Matrix<3, 3, int> m12{-2, 1, 2, 1, 3, 4, 1, -5, 5};
-//
-//    cout << m12.det() << endl;
-//
-//    auto mmm = Matrix<3, 3, int>::identity();
+    Matrix<3, 3, int> m12{-2, 1, 2, 1, 3, 4, 1, -5, 5};
+
+    cout << m12.det() << endl;
+
+    auto mmm = Matrix<3, 3, int>::identity();
 
     return 0;
 }
