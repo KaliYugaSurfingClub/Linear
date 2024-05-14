@@ -35,12 +35,12 @@ namespace Linear::Details {
             return *this;
         }
 
-        difference_type &operator-(jump_iterator other) {
-            return it_ - other.it_;
+        difference_type operator-(jump_iterator other) {
+            return (it_ - other.it_) / jump_len_;
         }
 
         bool operator!=(jump_iterator other) const {
-            return it_ != other.it_;
+            return it_ < other.it_;
         }
 
         bool operator==(jump_iterator other) const {

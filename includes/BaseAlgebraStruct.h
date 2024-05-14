@@ -14,7 +14,7 @@ namespace Linear::Details {
         BaseAlgebraStruct() = default;
 
         template<typename Iter>
-        BaseAlgebraStruct(Iter begin, const Iter &end) {
+        BaseAlgebraStruct(Iter begin, Iter end) {
             if (std::distance(begin, end) != Size) {
                 throw std::invalid_argument("too many or too few arguments in base algebra struct");
             }

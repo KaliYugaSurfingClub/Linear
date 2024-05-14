@@ -4,11 +4,18 @@
 #include "Vector.h"
 #include "Helpers.h"
 #include "Permutation.h"
+#include "jump_iterator.h"
 
 namespace Linear {
 
     template<std::size_t M, std::size_t N, typename Field>
     class MatrixElmRange;
+
+    template<std::size_t M, std::size_t N, typename Field>
+    class MatrixColRange;
+
+    template<std::size_t M, std::size_t N, typename Field>
+    class MatrixRowRange;
 
     template<std::size_t M, std::size_t N, typename Field>
     class ColumnRef;
@@ -88,7 +95,7 @@ namespace Linear {
 
             Field res = 0;
 
-            for (auto &[sign, permutation] : all_permutations) {
+            for (auto &[sign, permutation]: all_permutations) {
                 Field curr_product = sign;
                 for (std::size_t i = 0; i < permutation.size(); ++i) {
                     curr_product *= (*this)(i, permutation[i]);
@@ -96,6 +103,13 @@ namespace Linear {
                 res += curr_product;
             }
 
+            return res;
+        }
+
+        static Matrix<M, M, Field> identity() {
+            Matrix<M, M, Field> res;
+            std::fill_n(jump_iterator(MatrixElmRange(res).begin(), M + 1), M, 1);
+//            std::fill(jump_iterator(MatrixElmRange(res).begin(), M + 1), MatrixElmRange(res).end(), 1);
             return res;
         }
 

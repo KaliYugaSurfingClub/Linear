@@ -37,27 +37,6 @@ namespace Linear::Details {
         return res;
     }
 
-
-//    class Permutations {
-//    public:
-//        static std::vector<std::vector<std::size_t>> get_permutations(std::size_t len) {
-//            using namespace std;
-//
-//            if (permutations_.find(len) == permutations_.end()) {
-//                size_t count_of_permutations = factorial(len);
-//                permutations_[len] = {count_of_permutations, vector<size_t>(len)};
-//
-//                std::ranges::iota(permutations_[len][0], 0);
-//
-//
-//            }
-//
-//            return permutations_.at(len);
-//        }
-//
-//        static inline std::map<std::size_t, std::vector<std::vector<std::size_t>>> permutations_;
-//    };
-
 }
 
 #endif //LINEAR_ALGEBRA_HELPERS_H
