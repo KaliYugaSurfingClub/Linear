@@ -17,7 +17,7 @@ namespace Linear {
     class RowRef;
 
 
-    template<std::size_t M, std::size_t N, typename Field = int>
+    template<std::size_t M, std::size_t N, typename Field>
     class Matrix : public BaseAlgebraStruct<Matrix<M, N, Field>, M * N, Field> {
 
     using Base = BaseAlgebraStruct<Matrix<M, N, Field>, M * N, Field>;
@@ -83,8 +83,7 @@ namespace Linear {
             return const_cast<Field &>(ref);
         }
 
-        //todo передалать отдельный класс с перестановками
-        std::enable_if_t<M == N, Field> det() const {
+        Field det() const requires (M == N) {
             const auto &all_permutations = PermutationsStorage::get(M);
 
             Field res = 0;

@@ -22,7 +22,7 @@ namespace Linear {
         return res;
     }
 
-    template<size_t M, typename Field = int>
+    template<size_t M, typename Field>
     Vector<M, Field> vector_product(const Vector<M, Field> &left, const Vector<M, Field> &right) {
 
     }
