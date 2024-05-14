@@ -85,20 +85,17 @@ namespace Linear {
 
         //todo передалать отдельный класс с перестановками
         std::enable_if_t<M == N, Field> det() const {
-            std::vector<std::size_t> permutation(M);
-            std::ranges::iota(permutation, 0);
-            short sign = get_sign_of_permutation(permutation);
+            const auto &all_permutations = PermutationsStorage::get(M);
 
             Field res = 0;
 
-            do {
-                Field product_of_permutation = 1;
-                sign = get_sign_of_permutation(permutation);
+            for (auto &[sign, permutation] : all_permutations) {
+                Field curr_product = sign;
                 for (std::size_t i = 0; i < permutation.size(); ++i) {
-                    product_of_permutation *= (*this)(i, permutation[i]);
+                    curr_product *= (*this)(i, permutation[i]);
                 }
-                res += product_of_permutation * sign;
-            } while (std::next_permutation(permutation.begin(), permutation.end()));
+                res += curr_product;
+            }
 
             return res;
         }

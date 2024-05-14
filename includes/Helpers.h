@@ -31,23 +31,10 @@ namespace Linear::Details {
     template<typename T>
     T factorial(T num) {
         T res = 1;
-        for (std::size_t i = 2; i < num; ++i) {
-            res *= 2;
+        for (std::size_t i = 2; i <= num; ++i) {
+            res *= i;
         }
         return res;
-    }
-
-    short get_sign_of_permutation(const std::vector<std::size_t> &per) {
-        short sign = 1;
-        for (std::size_t i = 0; i < per.size(); ++i) {
-            std::size_t inv_count = std::count_if(per.begin() + i + 1, per.end(), less_than(per[i]));
-
-            if (inv_count % 2 != 0) {
-                sign *= -1;
-            }
-        }
-
-        return sign;
     }
 
 
