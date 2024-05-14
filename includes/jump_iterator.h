@@ -40,7 +40,7 @@ namespace Linear::Details {
         }
 
         bool operator!=(jump_iterator other) const {
-            return it_ != other.it_;
+            return it_ < other.it_;
         }
 
         bool operator==(jump_iterator other) const {

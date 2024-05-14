@@ -16,6 +16,7 @@ int main() {
 
     vector v{1, 2, 3, 4, 5};
     copy(m.row_ref(0).begin(),  m.row_ref(0).end(), m.row_ref(1).begin());
+    Vector<5, int>(m.row_ref(1));
 
     Vector<5, int> vv = Vector<5, int>(v) + Vector<5, int>(m.row_ref(1));
 
@@ -56,7 +57,7 @@ int main() {
 
     cout << m12.det() << endl;
 
-    const Matrix<1, 2, int> j;
+//    auto mmm = Matrix<3, 3, int>::identity();
 
     return 0;
 }

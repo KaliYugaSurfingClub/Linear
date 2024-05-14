@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Helpers.h"
 #include "Permutation.h"
+#include "jump_iterator.h"
 
 namespace Linear {
 
@@ -97,6 +98,12 @@ namespace Linear {
             }
 
             return res;
+        }
+
+        static Matrix<M, M, Field> identity() {
+            Matrix<M, M, Field> res;
+            MatrixElmRange range(res);
+            std::fill(jump_iterator(range.begin(), M + 1), jump_iterator(range.end(), M), 1);
         }
 
         friend class MatrixElmRange<M, N, Field>;
