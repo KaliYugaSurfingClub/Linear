@@ -22,7 +22,7 @@ namespace Linear::Details {
     }
 
     template<typename T>
-    auto create_counter(T start)  {
+    auto create_counter(T start) {
         return [&]() mutable {
             return start++;
         };
@@ -36,6 +36,25 @@ namespace Linear::Details {
         }
         return res;
     }
+
+    template<typename Iter>
+    class Range {
+    public:
+        Range(std::function<Iter()> &&begin, std::function<Iter()> &&end)
+                : begin_(begin), end_(end) {}
+
+        Iter begin() const {
+            return begin_();
+        }
+
+        Iter end() const {
+            return end_();
+        }
+
+    private:
+        std::function<Iter()> begin_;
+        std::function<Iter()> end_;
+    };
 
 }
 
