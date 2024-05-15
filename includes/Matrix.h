@@ -8,17 +8,20 @@
 
 namespace Linear {
 
-    template<std::size_t M, std::size_t N, typename Field>
-    class ColumnIterator;
-
-    template<std::size_t M, std::size_t N, typename Field>
-    class RowIterator;
+    template<typename Ref, std::size_t M, std::size_t N, typename Field>
+    class MatrixIterator;
 
     template<std::size_t M, std::size_t N, typename Field>
     class ColumnRef;
 
     template<std::size_t M, std::size_t N, typename Field>
+    class ConstColumnRef;
+
+    template<std::size_t M, std::size_t N, typename Field>
     class RowRef;
+
+    template<std::size_t M, std::size_t N, typename Field>
+    class ConstRowRef;
 
     template<typename Iter>
     class Range {
@@ -48,6 +51,12 @@ namespace Linear {
     public:
         using value_type = Field;
 
+        using ColumnIterator = MatrixIterator<ColumnRef<M, N, Field>, M, N, Field>;
+        using RowIterator = MatrixIterator<RowRef<M, N, Field>, M, N, Field>;
+
+        using ConstColumnIterator = MatrixIterator<ConstColumnRef<M, N, Field>, M, N, Field>;
+        using ConstRowIterator = MatrixIterator<ConstRowRef<M, N, Field>, M, N, Field>;
+
         using Base::Base;
 
         Matrix(std::initializer_list<Vector<M, Field>> list) {
@@ -62,66 +71,26 @@ namespace Linear {
             }
         }
 
-        auto elems()  {
-            auto begin = [&] {
-                return Base::data_.begin();
-            };
-
-            auto end = [&] {
-                return Base::data_.end();
-            };
-
-            return Range<typename Base::iterator>(begin, end);
-        }
-
-        auto rows() {
-            auto begin = [&] {
-                return RowIterator<M, N, Field>(*this, 0);
-            };
-            auto end = [&] {
-                return RowIterator<M, N, Field>(*this, M);
-            };
-            return Range<RowIterator<M, N, Field>>(begin, end);
-        }
-
-        auto columns() {
-            auto begin = [&] {
-                return ColumnIterator<M, N, Field>(*this, 0);
-            };
-            auto end = [&] {
-                return ColumnIterator<M, N, Field>(*this, N);
-            };
-            return Range<ColumnIterator<M, N, Field>>(begin, end);
-        }
-
-        ColumnRef<M, N, Field> column_ref(std::size_t index) {
-            return {*this, index};
-        }
-
-        RowRef<M, N, Field> row_ref(std::size_t index) {
-            return {*this, index};
-        }
-
-        Vector<M, Field> column_copy(std::size_t index) const {
-            if (index >= N) {
-                throw std::out_of_range("out_of_range get column_copy");
-            }
-
-            auto begin = std::next(Base::data_.begin(), M * index);
-            auto end = std::next(begin, M * index);
-            return {begin, end};
-        }
-
-        Vector<N, Field> row_copy(std::size_t index) const {
-            if (index >= M) {
-                throw std::out_of_range("out_of_range in get row_copy");
-            }
-
-            Vector<N, Field> res;
-            for (std::size_t i = 0; i < N; ++i) {
-                res[i] = Base::data_[i * M + index];
-            }
+        static Matrix<M, M, Field> identity() {
+            Matrix<M, M, Field> res;
+            std::fill_n(jump_iterator(res.elems().begin(), M + 1), M, 1);
             return res;
+        }
+
+        ColumnRef<M, N, Field> column(std::size_t index) {
+            return {*this, index};
+        }
+
+        ConstColumnRef<M, N, Field> column(std::size_t index) const {
+            return {*this, index};
+        }
+
+        RowRef<M, N, Field> row(std::size_t index) {
+            return {*this, index};
+        }
+
+        ConstRowRef<M, N, Field> row(std::size_t index) const {
+            return {*this, index};
         }
 
         const Field &operator()(std::size_t i, std::size_t j) const {
@@ -138,6 +107,48 @@ namespace Linear {
             return const_cast<Field &>(ref);
         }
 
+        auto elems() {
+            return Range<typename Base::iterator>(
+                    [&] { return Base::data_.begin(); },
+                    [&] { return Base::data_.end(); }
+            );
+        }
+
+        auto elems() const {
+            return Range<typename Base::const_iterator>(
+                    [&] { return Base::data_.cbegin(); },
+                    [&] { return Base::data_.cend(); }
+            );
+        }
+
+        auto rows() {
+            return Range<RowIterator>(
+                    [&] { return RowIterator(*this, 0); },
+                    [&] { return RowIterator(*this, M); }
+            );
+        }
+
+        auto rows() const {
+            return Range<ConstRowIterator>(
+                    [&] { return ConstRowIterator(*this, 0); },
+                    [&] { return ConstRowIterator(*this, M); }
+            );
+        }
+
+        auto columns() {
+            return Range<ColumnIterator>(
+                    [&] { return ColumnIterator(*this, 0); },
+                    [&] { return ColumnIterator(*this, N); }
+            );
+        }
+
+        auto columns() const {
+            return Range<ConstColumnIterator>(
+                    [&] { return ConstColumnIterator(*this, 0); },
+                    [&] { return ConstColumnIterator(*this, N); }
+            );
+        }
+
         Field det() const requires (M == N) {
             const auto &all_permutations = PermutationsStorage::get(M);
 
@@ -151,12 +162,6 @@ namespace Linear {
                 res += curr_product;
             }
 
-            return res;
-        }
-
-        static Matrix<M, M, Field> identity() {
-            Matrix<M, M, Field> res;
-            std::fill_n(jump_iterator(res.elems().begin(), M + 1), M, 1);
             return res;
         }
     };

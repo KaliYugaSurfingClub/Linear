@@ -15,10 +15,10 @@ int main() {
     Matrix<3, 5, int> m {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
     vector v{1, 2, 3, 4, 5};
-    copy(m.row_ref(0).begin(),  m.row_ref(0).end(), m.row_ref(1).begin());
-    Vector<5, int>(m.row_ref(1));
+    copy(m.row(0).begin(), m.row(0).end(), m.row(1).begin());
+    Vector<5, int>(m.row(1));
 
-    Vector<5, int> vv = Vector<5, int>(v) + Vector<5, int>(m.row_ref(1));
+    Vector<5, int> vv = Vector<5, int>(v) + Vector<5, int>(m.row(1));
 
     for (RowRef r : m.rows()) {
         for (int item : r) {
@@ -30,7 +30,7 @@ int main() {
     Vector<3, int> v1 {1, 2, 3};
     Vector<3, int> v2 {2, 3, 4};
 
-    RowRef r = m.row_ref(1);
+    RowRef r = m.row(1);
 
 
     Matrix<3, 3, int> m1{1, 0, 0, 0, 1, 0, 0, 0, 1};
@@ -42,8 +42,6 @@ int main() {
         }
         cout << endl;
     }
-
-    m2 = m1 * m1 * m1;
 
     for (RowRef r : m2.rows()) {
         for (int item : r) {
