@@ -11,19 +11,6 @@ namespace Linear {
 
     namespace Details {
 
-        template<std::size_t M, std::size_t N, typename Field>
-        class MatrixRangeBase {
-        protected:
-            using Matrix = Matrix<M, N, Field>;
-
-            explicit MatrixRangeBase(Matrix &matrix, std::size_t start, std::size_t finish)
-            : matrix_(matrix), start_(start), finish_(finish) {}
-
-            Matrix &matrix_;
-            std::size_t start_;
-            std::size_t finish_;
-        };
-
         template<typename Derived, std::size_t M, std::size_t N, typename Field>
         class MatrixIteratorBase {
         public:
@@ -45,6 +32,11 @@ namespace Linear {
                 return index_ - other.index_;
             }
 
+            Derived &operator++() {
+                ++index_;
+                return reinterpret_cast<Derived &>(*this);
+            }
+
         protected:
             Matrix &matrix_;
             std::size_t index_;
@@ -52,119 +44,38 @@ namespace Linear {
 
     }
 
-
     template<std::size_t M, std::size_t N, typename Field>
-    class MatrixElmRange : public MatrixRangeBase<M, N, Field> {
+    class ColumnIterator : public MatrixIteratorBase<ColumnIterator<M, N, Field>, M, N, Field> {
 
-    using Base = MatrixRangeBase<M, N, Field>;
+    using BaseIterator = MatrixIteratorBase<ColumnIterator, M, N, Field>;
 
     public:
-        using Matrix = Matrix<M, N, Field>;
-        using value_type = Matrix::value_type;
-        using difference_type = std::ptrdiff_t;
-        using iterator = Matrix::data_type::iterator;
+        using value_type = ColumnRef<M, N, Field>;
+        using iterator_category = BaseIterator::iterator_category;
+        using difference_type = BaseIterator::difference_type;
 
-        explicit MatrixElmRange(const Matrix &matrix, std::size_t start = 0, std::size_t finish = M * N)
-        : Base(const_cast<Matrix &>(matrix), start, finish) {}
+        ColumnIterator(Matrix<M, N, Field> &matrix, std::size_t index) : BaseIterator(matrix, index) {}
 
-        iterator begin() const {
-            return std::next(Base::matrix_.data_.begin(), Base::start_);
-        }
-
-        iterator end() const {
-            return std::next(Base::matrix_.data_.begin(), Base::finish_);
+        value_type operator*() {
+            return {BaseIterator::matrix_, BaseIterator::index_};
         }
     };
 
-
     template<std::size_t M, std::size_t N, typename Field>
-    class MatrixColRange : public MatrixRangeBase<M, N, Field> {
+    class RowIterator : public MatrixIteratorBase<RowIterator<M, N, Field>, M, N, Field> {
 
-    using BaseRange = MatrixRangeBase<M, N, Field>;
-
-    class ColumnIterator;
+    using BaseIterator = MatrixIteratorBase<RowIterator, M, N, Field>;
 
     public:
-        using Matrix = Matrix<M, N, Field>;
-        using iterator = ColumnIterator;
+        using value_type = RowRef<M, N, Field>;
+        using iterator_category = BaseIterator::iterator_category;
+        using difference_type = BaseIterator::difference_type;
 
-        explicit MatrixColRange(const Matrix &matrix, std::size_t start = 0, std::size_t finish = N)
-        : BaseRange(const_cast<Matrix &>(matrix), start, finish) {}
+        RowIterator(Matrix<M, N, Field> &matrix, std::size_t index) : BaseIterator(matrix, index) {}
 
-        iterator begin() const {
-            return {BaseRange::matrix_, BaseRange::start_};
+        value_type operator*() {
+            return {BaseIterator::matrix_, BaseIterator::index_};
         }
-
-        iterator end() const {
-            return {BaseRange::matrix_, BaseRange::finish_};
-        }
-
-    private:
-        class ColumnIterator : public MatrixIteratorBase<ColumnIterator, M, N, Field> {
-
-        using BaseIterator = MatrixIteratorBase<ColumnIterator, M, N, Field>;
-
-        public:
-            using value_type = ColumnRef<M, N, Field>;
-            using iterator_category = BaseIterator::iterator_category;
-            using difference_type = BaseIterator::difference_type;
-
-            ColumnIterator(Matrix &matrix, std::size_t index) : BaseIterator(matrix, index) {}
-
-            ColumnIterator &operator++() {
-                ++BaseIterator::index_;
-                return *this;
-            }
-
-            value_type operator*() {
-                return {BaseIterator::matrix_, BaseIterator::index_};
-            }
-        };
-    };
-
-
-    template<std::size_t M, std::size_t N, typename Field>
-    class MatrixRowRange : public MatrixRangeBase<M, N, Field> {
-
-    using BaseRange = MatrixRangeBase<M, N, Field>;
-    class RowIterator;
-
-    public:
-        using Matrix = Matrix<M, N, Field>;
-        using iterator = RowIterator;
-
-        explicit MatrixRowRange(const Matrix &matrix, std::size_t start = 0, std::size_t finish = M)
-        : BaseRange(const_cast<Matrix &>(matrix), start, finish) {}
-
-        iterator begin() const {
-            return {BaseRange::matrix_, BaseRange::start_};
-        }
-
-        iterator end() const {
-            return {BaseRange::matrix_, BaseRange::finish_};
-        }
-
-    private:
-        class RowIterator : public MatrixIteratorBase<RowIterator, M, N, Field> {
-
-        using BaseIterator = MatrixIteratorBase<RowIterator, M, N, Field>;
-
-        public:
-            using value_type = RowRef<M, N, Field>;
-            using iterator_category = BaseIterator::iterator_category;
-            using difference_type = BaseIterator::difference_type;
-
-            RowIterator(Matrix &matrix, std::size_t index) : BaseIterator(matrix, index) {}
-
-            RowIterator &operator++() {
-                ++RowIterator::index_;
-                return *this;
-            }
-
-            value_type operator*() {
-                return {BaseIterator::matrix_, BaseIterator::index_};
-            }
-        };
     };
 
 }

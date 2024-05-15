@@ -55,22 +55,22 @@ namespace Linear {
 
     public:
         RowRef(Matrix<M, N, Field> &ref, std::size_t index) : Base(
-            jump_iterator(MatrixElmRange(ref).begin() + index, M),
-            jump_iterator(MatrixElmRange(ref).end() + index, M),
+            jump_iterator(ref.elems().begin() + index, M),
+            jump_iterator(ref.elems().end() + index, M),
             index
         ) {}
     };
 
 
     template<std::size_t M, std::size_t N, typename Field>
-    class ColumnRef : public MatrixRefBase<typename MatrixElmRange<M, N, Field>::iterator, Field, M> {
+    class ColumnRef : public MatrixRefBase<typename Matrix<M, N, Field>::data_type::iterator, Field, M> {
 
-    using Base = MatrixRefBase<typename MatrixElmRange<M, N, Field>::iterator, Field, M>;
+    using Base = MatrixRefBase<typename Matrix<M, N, Field>::data_type::iterator, Field, M>;
 
     public:
         ColumnRef(Matrix <M, N, Field> &ref, std::size_t index) : Base(
-            MatrixElmRange(ref).begin() + index * M,
-            MatrixElmRange(ref).begin() + index * M + M,
+            ref.elems().begin() + index * M,
+            ref.elems().begin() + index * M + M,
             index
         ) {}
     };

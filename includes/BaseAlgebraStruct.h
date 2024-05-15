@@ -10,6 +10,8 @@ namespace Linear::Details {
     public:
         using value_type = Field;
         using data_type = std::vector<Field>;
+        using iterator = data_type::iterator;
+        using const_iterator = data_type::const_iterator;
 
         BaseAlgebraStruct() = default;
 
