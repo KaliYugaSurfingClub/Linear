@@ -11,7 +11,7 @@
 
 namespace Linear {
 
-    template<std::size_t M, typename Field = int>
+    template<std::size_t M, typename Field>
     class Vector : public BaseAlgebraStruct<Vector<M, Field>, M, Field> {
 
     using Base = BaseAlgebraStruct<Vector<M, Field>, M, Field>;
@@ -54,6 +54,17 @@ namespace Linear {
 
     template<typename Head, typename ...T>
     Vector(Head, T...) -> Vector<sizeof...(T) + 1, Head>;
+
+    template<size_t M, typename Field>
+    Vector<M, Field> vector_product(const Vector<M, Field> &left, const Vector<M, Field> &right) {
+
+    }
+
+    template<size_t M, typename Filed = int>
+    Filed scalar_product(const Vector<M, Filed> &left, const Vector<M, Filed> &right) {
+        return std::inner_product(left.begin(), left.end(), right.begin(), Filed(0));
+    }
+
 }
 
 #endif //LINER_ALGEBRA_VECTOR_H

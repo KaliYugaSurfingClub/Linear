@@ -22,7 +22,7 @@ namespace Linear::Details {
     }
 
     template<typename T>
-    auto create_counter(T start)  {
+    auto create_counter(T start) {
         return [&]() mutable {
             return start++;
         };
@@ -37,26 +37,24 @@ namespace Linear::Details {
         return res;
     }
 
+    template<typename Iter>
+    class Range {
+    public:
+        Range(std::function<Iter()> &&begin, std::function<Iter()> &&end)
+                : begin_(begin), end_(end) {}
 
-//    class Permutations {
-//    public:
-//        static std::vector<std::vector<std::size_t>> get_permutations(std::size_t len) {
-//            using namespace std;
-//
-//            if (permutations_.find(len) == permutations_.end()) {
-//                size_t count_of_permutations = factorial(len);
-//                permutations_[len] = {count_of_permutations, vector<size_t>(len)};
-//
-//                std::ranges::iota(permutations_[len][0], 0);
-//
-//
-//            }
-//
-//            return permutations_.at(len);
-//        }
-//
-//        static inline std::map<std::size_t, std::vector<std::vector<std::size_t>>> permutations_;
-//    };
+        Iter begin() const {
+            return begin_();
+        }
+
+        Iter end() const {
+            return end_();
+        }
+
+    private:
+        std::function<Iter()> begin_;
+        std::function<Iter()> end_;
+    };
 
 }
 

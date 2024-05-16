@@ -10,11 +10,13 @@ namespace Linear::Details {
     public:
         using value_type = Field;
         using data_type = std::vector<Field>;
+        using iterator = data_type::iterator;
+        using const_iterator = data_type::const_iterator;
 
         BaseAlgebraStruct() = default;
 
         template<typename Iter>
-        BaseAlgebraStruct(Iter begin, const Iter &end) {
+        BaseAlgebraStruct(Iter begin, Iter end) {
             if (std::distance(begin, end) != Size) {
                 throw std::invalid_argument("too many or too few arguments in base algebra struct");
             }

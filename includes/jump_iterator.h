@@ -35,12 +35,12 @@ namespace Linear::Details {
             return *this;
         }
 
-        difference_type &operator-(jump_iterator other) {
-            return it_ - other.it_;
+        difference_type operator-(jump_iterator other) {
+            return (it_ - other.it_) / jump_len_;
         }
 
         bool operator!=(jump_iterator other) const {
-            return it_ != other.it_;
+            return it_ < other.it_;
         }
 
         bool operator==(jump_iterator other) const {
@@ -58,10 +58,10 @@ namespace Linear::Details {
 namespace std {
 
     template<typename Iter>
-    struct iterator_traits<Linear::Details::jump_iterator<Iter>> {
-        using value_type = Linear::Details::jump_iterator<Iter>::value_type;
-        using iterator_category = Linear::Details::jump_iterator<Iter>::iterator_category;
-        using difference_type = Linear::Details::jump_iterator<Iter>::difference_type;
+    struct iterator_traits<Linear::jump_iterator<Iter>> {
+        using value_type = Linear::jump_iterator<Iter>::value_type;
+        using iterator_category = Linear::jump_iterator<Iter>::iterator_category;
+        using difference_type = Linear::jump_iterator<Iter>::difference_type;
     };
 
 }
