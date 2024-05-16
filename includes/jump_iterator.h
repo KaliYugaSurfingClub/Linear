@@ -10,7 +10,7 @@ namespace Linear::Details {
     class jump_iterator {
     public:
         using value_type = Iter::value_type;
-        using iterator_category = std::forward_iterator_tag;
+        using iterator_category = std::random_access_iterator_tag;
         using difference_type = Iter::difference_type;
 
         jump_iterator(Iter it, std::size_t jump_len)
@@ -25,14 +25,18 @@ namespace Linear::Details {
             return *this;
         }
 
+        jump_iterator &operator+=(std::size_t n) {
+            it_ = std::next(it_, jump_len_);
+            return *this;
+        }
+
         jump_iterator &operator--() {
             it_ = std::prev(it_, jump_len_);
             return *this;
         }
 
-        jump_iterator &operator+(std::size_t n) {
-            it_ = std::next(it_, n * jump_len_);
-            return *this;
+        jump_iterator operator+(std::size_t n) {
+            return {std::next(it_, n * jump_len_), jump_len_};
         }
 
         difference_type operator-(jump_iterator other) {

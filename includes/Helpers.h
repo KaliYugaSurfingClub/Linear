@@ -41,7 +41,7 @@ namespace Linear::Details {
     class Range {
     public:
         Range(std::function<Iter()> &&begin, std::function<Iter()> &&end)
-                : begin_(begin), end_(end) {}
+        : begin_(begin), end_(end) {}
 
         Iter begin() const {
             return begin_();
