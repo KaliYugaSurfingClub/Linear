@@ -4,15 +4,14 @@
 
 namespace Linear::Details {
 
-    template<typename Derived, std::size_t Size, typename Field>
+    template<std::size_t Size, typename Field>
     class BaseAlgebraStruct {
     public:
-        using value_type = Field;
         using data_type = std::array<Field, Size>;
-        using iterator = data_type::iterator;
-        using const_iterator = data_type::const_iterator;
 
         BaseAlgebraStruct() = default;
+
+        explicit BaseAlgebraStruct(const Field &value) : data_{value} {}
 
         template<typename Iter>
         BaseAlgebraStruct(Iter begin, Iter end) {
@@ -26,50 +25,12 @@ namespace Linear::Details {
         explicit BaseAlgebraStruct(const Range &range)
         : BaseAlgebraStruct(std::begin(range), std::end(range)) {}
 
-        BaseAlgebraStruct(std::initializer_list<value_type> list)
+        BaseAlgebraStruct(std::initializer_list<Field> list)
         : BaseAlgebraStruct(list.begin(), list.end()) {}
 
-        bool operator==(const BaseAlgebraStruct &other) const {
-            return data_ == other.data_;
-        }
-
-        bool operator!=(const BaseAlgebraStruct &other) const {
-            return data_ != other.data_;
-        }
-
-        Derived operator*(const value_type &scalar) const {
-            Derived res;
-            std::ranges::transform(data_, res.begin(), multiply_by_scalar(scalar));
-            return res;
-        }
-
-        Derived operator+(const Derived &right) const {
-            Derived res;
-            std::ranges::transform(data_, right.data_, res.begin(), std::plus<value_type>{});
-            return res;;
-        }
-
-        Derived operator-(const Derived &right) const {
-            Derived res;
-            std::ranges::transform(data_, right.data_, res.begin(), std::minus<value_type>{});
-            return res;
-        }
-
-        void operator*=(const value_type &scalar) {
-            std::ranges::transform(data_, data_.begin(), multiply_by_scalar(scalar));
-        }
-
-        void operator+=(const Derived &right) {
-            std::ranges::transform(data_, right.data_, data_.begin(), std::plus<value_type>{});
-        }
-
-        void operator-=(const Derived &right) {
-            std::ranges::transform(data_, right.data_, data_.begin(), std::minus<value_type>{});
-        }
 
     protected:
         virtual ~BaseAlgebraStruct() = default;
-
         data_type data_{Field{0}};
     };
 

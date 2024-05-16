@@ -22,9 +22,9 @@ namespace Linear {
 
 
     template<std::size_t M, std::size_t N, typename Field>
-    class Matrix : public BaseAlgebraStruct<Matrix<M, N, Field>, M * N, Field> {
+    class Matrix : private BaseAlgebraStruct<M * N, Field> {
 
-        using Base = BaseAlgebraStruct<Matrix<M, N, Field>, M * N, Field>;
+        using Base = BaseAlgebraStruct<M * N, Field>;
 
         template<typename Ref>
         class MatrixIterator {
@@ -66,9 +66,11 @@ namespace Linear {
 
         using ColumnIterator = MatrixIterator<ColumnRef<M, N, Field>>;
         using RowIterator = MatrixIterator<RowRef<M, N, Field>>;
+        using ElemIterator = Base::data_type::iterator;
 
         using ConstColumnIterator = MatrixIterator<ConstColumnRef<M, N, Field>>;
         using ConstRowIterator = MatrixIterator<ConstRowRef<M, N, Field>>;
+        using ConstElemIterator = Base::data_type::const_iterator;
 
         using Base::Base;
 
@@ -86,7 +88,7 @@ namespace Linear {
 
         static Matrix<M, M, Field> identity() {
             Matrix<M, M, Field> res;
-//            std::fill_n(jump_iterator(res.elems().begin(), M + 1), M, 1);
+            std::fill_n(jump_iterator(res.elems().begin(), M + 1), M, 1);
             return res;
         }
 
@@ -121,14 +123,14 @@ namespace Linear {
         }
 
         auto elems() {
-            return Range<typename Base::iterator>(
+            return Range<ElemIterator>(
                     [&] { return Base::data_.begin(); },
                     [&] { return Base::data_.end(); }
             );
         }
 
         auto elems() const {
-            return Range<typename Base::const_iterator>(
+            return Range<ConstElemIterator>(
                     [&] { return Base::data_.cbegin(); },
                     [&] { return Base::data_.cend(); }
             );

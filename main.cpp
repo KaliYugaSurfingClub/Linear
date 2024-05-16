@@ -2,6 +2,7 @@
 
 #include "Matrix.h"
 #include "Ref.h"
+#include "Operator.h"
 
 using namespace std;
 using namespace Linear;
@@ -27,7 +28,7 @@ int main() {
     copy(m.row(0).begin(), m.row(0).end(), m.row(1).begin());
     Vector<5, int>(m.row(1));
 
-    Vector<5, int> vv = Vector<5, int>(v) + Vector<5, int>(m.row(1));
+//    Vector<5, int> vv = Vector<5, int>(v) + Vector<5, int>(m.row(1));
 
     for (RowRef r : m.rows()) {
         for (int item : r) {

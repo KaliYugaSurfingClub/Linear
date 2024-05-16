@@ -12,9 +12,9 @@
 namespace Linear {
 
     template<std::size_t M, typename Field>
-    class Vector : public BaseAlgebraStruct<Vector<M, Field>, M, Field> {
+    class Vector : private BaseAlgebraStruct<M, Field> {
 
-    using Base = BaseAlgebraStruct<Vector<M, Field>, M, Field>;
+    using Base = BaseAlgebraStruct<M, Field>;
 
     public:
         using value_type = Field;
