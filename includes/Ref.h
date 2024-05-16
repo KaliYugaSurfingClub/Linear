@@ -9,12 +9,16 @@
 
 namespace Linear {
 
-    template<typename Iterator, typename Field, std::size_t VectorSize>
-    class MatrixRefBaseConst {
+    template<bool is_const, typename Iterator, typename Field, std::size_t VectorSize>
+    class MatrixRefBase {
     public:
         using Vector = Vector<VectorSize, Field>;
 
-        virtual const Field &operator[](std::size_t index) const {
+        const Field &operator[](std::size_t index) const requires is_const {
+            return *std::next(begin_, index);
+        }
+
+        Field &operator[](std::size_t index) const requires (!is_const) {
             return *std::next(begin_, index);
         }
 
@@ -27,7 +31,7 @@ namespace Linear {
         }
 
     protected:
-        MatrixRefBaseConst(Iterator begin, Iterator end, std::size_t index)
+        MatrixRefBase(Iterator begin, Iterator end, std::size_t index)
         : begin_(begin), end_(end), index_(index) {}
 
         std::size_t index_;
@@ -35,39 +39,11 @@ namespace Linear {
         Iterator end_;
     };
 
-    template<typename Iterator, typename Field, std::size_t VectorSize>
-    class MatrixRefBase : public MatrixRefBaseConst<Iterator, Field, VectorSize> {
-
-    using Base = MatrixRefBaseConst<Iterator, Field, VectorSize>;
-
-    public:
-        Field &operator[](std::size_t index) const override {
-            return *std::next(Base::begin_, index);
-        }
-
-        void operator*=(const Field &scalar) const {
-            std::transform(Base::begin_, Base::end_, Base::begin_, multiply_by_scalar(scalar));
-        }
-
-        void operator+=(const Base::Vector &vector) const {
-            std::transform(vector.begin(), vector.end(), Base::begin_, Base::begin_, std::plus<Field>{});
-        }
-
-        void operator-=(const Base::Vector &vector) const {
-            std::transform(vector.begin(), vector.end(), Base::begin_, Base::begin_, std::minus<Field>{});
-        }
-
-    protected:
-        MatrixRefBase(Iterator begin, Iterator end, std::size_t index)
-        : Base(begin, end, index) {}
-
-    };
-
 
     template<std::size_t M, std::size_t N, typename Field>
-    class RowRef : public MatrixRefBase<jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, Field, N> {
+    class RowRef : public MatrixRefBase<false, jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, Field, N> {
 
-    using Base = MatrixRefBase<jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, Field, N>;
+    using Base = MatrixRefBase<false, jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, Field, N>;
 
     public:
         RowRef(Matrix<M, N, Field> &ref, std::size_t index) : Base(
@@ -79,9 +55,9 @@ namespace Linear {
 
 
     template<std::size_t M, std::size_t N, typename Field>
-    class ConstRowRef : public MatrixRefBaseConst<jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, Field, N> {
+    class ConstRowRef : public MatrixRefBase<true, jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, Field, N> {
 
-    using Base = MatrixRefBaseConst<jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, Field, N>;
+    using Base = MatrixRefBase<true, jump_iterator<typename Matrix<M, N, Field>::data_type::iterator>, Field, N>;
 
     public:
         ConstRowRef(const Matrix<M, N, Field> &ref, std::size_t index) : Base(
@@ -93,9 +69,9 @@ namespace Linear {
 
 
     template<std::size_t M, std::size_t N, typename Field>
-    class ColumnRef : public MatrixRefBase<typename Matrix<M, N, Field>::data_type::iterator, Field, M> {
+    class ColumnRef : public MatrixRefBase<false, typename Matrix<M, N, Field>::data_type::iterator, Field, M> {
 
-    using Base = MatrixRefBase<typename Matrix<M, N, Field>::data_type::iterator, Field, M>;
+    using Base = MatrixRefBase<false, typename Matrix<M, N, Field>::data_type::iterator, Field, M>;
 
     public:
         ColumnRef(Matrix <M, N, Field> &ref, std::size_t index) : Base(
@@ -107,9 +83,9 @@ namespace Linear {
 
 
     template<std::size_t M, std::size_t N, typename Field>
-    class ConstColumnRef : public MatrixRefBaseConst<typename Matrix<M, N, Field>::data_type::iterator, Field, M> {
+    class ConstColumnRef : public MatrixRefBase<true, typename Matrix<M, N, Field>::data_type::iterator, Field, M> {
 
-    using Base = MatrixRefBaseConst<typename Matrix<M, N, Field>::data_type::iterator, Field, M>;
+    using Base = MatrixRefBase<true, typename Matrix<M, N, Field>::data_type::iterator, Field, M>;
 
     public:
         ConstColumnRef(const Matrix <M, N, Field> &ref, std::size_t index) : Base(
