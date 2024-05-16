@@ -40,7 +40,7 @@ namespace Linear::Details {
         }
 
         difference_type operator-(jump_iterator other) {
-            return (it_ - other.it_) / jump_len_;
+            return std::distance(other.it_, it_) / jump_len_;
         }
 
         bool operator!=(jump_iterator other) const {
