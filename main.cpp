@@ -11,8 +11,17 @@ void f( Matrix<3, 3, int> &m) {
     *m.elems().begin() = 88;
 }
 
+template<typename T>
+void g(T ptr) {
+    cout << ptr << endl;
+}
+
 int main() {
     Matrix<3, 5, int> m {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+
+    array<int, 3> a{0};
+    auto i = next(a.begin(), 10);
+    g(i);
 
     vector v{1, 2, 3, 4, 5};
     copy(m.row(0).begin(), m.row(0).end(), m.row(1).begin());

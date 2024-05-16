@@ -6,14 +6,14 @@
 
 namespace Linear::Details {
 
-    template<typename Iter>
+    template<typename Pointer>
     class jump_iterator {
     public:
-        using value_type = Iter::value_type;
+        using value_type = std::remove_pointer_t<Pointer>;
         using iterator_category = std::random_access_iterator_tag;
-        using difference_type = Iter::difference_type;
+        using difference_type = std::ptrdiff_t;
 
-        jump_iterator(Iter it, std::size_t jump_len)
+        jump_iterator(Pointer it, std::size_t jump_len)
         : it_(it), jump_len_(jump_len) {}
 
         value_type &operator*() const {
@@ -52,7 +52,7 @@ namespace Linear::Details {
         }
 
     private:
-        Iter it_;
+        Pointer it_;
         std::size_t jump_len_;
     };
 

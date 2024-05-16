@@ -4,12 +4,11 @@
 
 namespace Linear::Details {
 
-    //todo array не работает с jump iterator, переделать (работает только vector)
     template<typename Derived, std::size_t Size, typename Field>
     class BaseAlgebraStruct {
     public:
         using value_type = Field;
-        using data_type = std::vector<Field>;
+        using data_type = std::array<Field, Size>;
         using iterator = data_type::iterator;
         using const_iterator = data_type::const_iterator;
 
@@ -71,7 +70,7 @@ namespace Linear::Details {
     protected:
         virtual ~BaseAlgebraStruct() = default;
 
-        data_type data_ = data_type(Size, Field{0});
+        data_type data_{Field{0}};
     };
 
 }

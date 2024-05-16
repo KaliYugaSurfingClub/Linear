@@ -86,7 +86,7 @@ namespace Linear {
 
         static Matrix<M, M, Field> identity() {
             Matrix<M, M, Field> res;
-            std::fill_n(jump_iterator(res.elems().begin(), M + 1), M, 1);
+//            std::fill_n(jump_iterator(res.elems().begin(), M + 1), M, 1);
             return res;
         }
 
