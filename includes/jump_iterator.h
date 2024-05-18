@@ -24,8 +24,8 @@ namespace Linear::Details {
             return *this;
         }
 
-        jump_iterator &operator+=(std::size_t n) {
-            it_ = std::next(it_, jump_len_);
+        jump_iterator &operator+=(difference_type n) {
+            it_ = std::next(it_, jump_len_ * n);
             return *this;
         }
 
@@ -34,7 +34,7 @@ namespace Linear::Details {
             return *this;
         }
 
-        jump_iterator operator+(std::size_t n) {
+        jump_iterator operator+(difference_type n) {
             return {std::next(it_, n * jump_len_), jump_len_};
         }
 

@@ -55,8 +55,6 @@ namespace Linear {
         virtual ~IVector() = default;
     };
 
-
-
 }
 
 #endif //LINEAR_ALGEBRA_IVECTOR_H
