@@ -2,7 +2,6 @@
 
 #include "Matrix.h"
 #include "Ref.h"
-#include "IVector.h"
 
 using namespace std;
 using namespace Linear;

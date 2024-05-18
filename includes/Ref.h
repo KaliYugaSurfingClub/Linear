@@ -2,6 +2,7 @@
 #define LINER_ALGEBRA_COLUMNREF_H
 
 #include "jump_iterator.h"
+#include "Vector.h"
 
 namespace Linear {
 

@@ -9,6 +9,18 @@
 namespace Linear {
 
     template<std::size_t M, std::size_t N, typename Field>
+    class RowRef;
+
+    template<std::size_t M, std::size_t N, typename Field>
+    class ConstRowRef;
+
+    template<std::size_t M, std::size_t N, typename Field>
+    class ColumnRef;
+
+    template<std::size_t M, std::size_t N, typename Field>
+    class ConstColumnRef;
+
+    template<std::size_t M, std::size_t N, typename Field>
     class Matrix {
 
         template<typename Ref>
