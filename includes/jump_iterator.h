@@ -3,7 +3,7 @@
 
 #include "iterator"
 
-namespace Linear::Details {
+namespace Linear {
 
     template<typename Pointer>
     class jump_iterator {
@@ -11,6 +11,8 @@ namespace Linear::Details {
         using value_type = std::remove_pointer_t<Pointer>;
         using iterator_category = std::random_access_iterator_tag;
         using difference_type = std::ptrdiff_t;
+
+        jump_iterator() = default;
 
         jump_iterator(Pointer it, std::size_t jump_len)
         : it_(it), jump_len_(jump_len) {}
@@ -51,8 +53,8 @@ namespace Linear::Details {
         }
 
     private:
-        Pointer it_;
-        std::size_t jump_len_;
+        Pointer it_ = nullptr;
+        std::size_t jump_len_ = 0;
     };
 
 }

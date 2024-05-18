@@ -5,33 +5,12 @@
 #include <vector>
 #include <algorithm>
 
-namespace Linear::Details {
-
-    template<typename T>
-    auto multiply_by_scalar(const T &scalar) {
-        return [&scalar](const T &other) {
-            return scalar * other;
-        };
-    }
-
-    template<typename T>
-    auto divide_by_scalar(const T &scalar) {
-        return [&scalar](const T &other) {
-            return other / scalar;
-        };
-    }
+namespace Linear {
 
     template<typename T>
     auto less_than(const T &scalar) {
         return [&scalar](const T &other) {
             return other < scalar;
-        };
-    }
-
-    template<typename T>
-    auto create_counter(T start) {
-        return [&]() mutable {
-            return start++;
         };
     }
 
@@ -63,10 +42,6 @@ namespace Linear::Details {
         std::function<Iterator()> end_;
     };
 
-}
-
-namespace Linear {
-    using namespace Details;
 }
 
 #endif //LINEAR_ALGEBRA_HELPERS_H

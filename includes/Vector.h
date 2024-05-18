@@ -112,11 +112,11 @@ namespace Linear {
         }
 
         void operator*=(const Field &scalar) {
-            std::transform(begin(), end(), begin(), multiply_by_scalar(scalar));
+            std::for_each(begin(), end(), [&](Field &item) { item *= scalar; });
         }
 
         void operator/=(const Field &scalar) {
-            std::transform(begin(), end(), begin(), divide_by_scalar(scalar));
+            std::for_each(begin(), end(), [&](Field &item) { item *= scalar; });
         }
 
         iterator begin() {

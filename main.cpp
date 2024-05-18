@@ -1,7 +1,6 @@
 #include "bits/stdc++.h"
 
 #include "Matrix.h"
-#include "Ref.h"
 
 using namespace std;
 using namespace Linear;
@@ -15,17 +14,23 @@ struct Test {
         Vector<3, int> v3_1 {1, 2, 3};
         Vector<3, int> v3_2 {1, 2, 3};
 
-        const RowRef<3, 3, int> ref = m.row(2);
-        const RowRef<3, 3, int> ref1 = m.row(1);
+        Matrix<3, 3, int>::RowRef ref = m.row(2);
+        Matrix<3, 3, int>::RowRef ref1 = m.row(1);
         ref = ref1 = Vector{1, 2, 3};
-
-
 
 
         m.column(1) += Vector{1, 2, 3} + m.row(1);
         m.column(1) *= 10;
 
-        for (auto row : m.rows()) {
+        for (auto row : m.columns()) {
+            for (int elem : row) {
+                cout << elem << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+
+        for (auto row : m.const_rows()) {
             for (int elem : row) {
                 cout << elem << " ";
             }
@@ -63,6 +68,10 @@ struct Test {
             }
         });
 
+        std::for_each(reverse_iterator(m.rows().begin()), m.rows().end(), [](auto r) {
+            cout << 123;
+        });
+
         for (auto row : m.rows()) {
             for (int elem : row) {
                 cout << elem << " ";
@@ -78,11 +87,19 @@ struct Test {
 
 int main() {
 
+    vector<int> v;
+
     Test::vec_oper();
 
-    vector<int> vec;
-    auto it = vec.begin();
-    it += 10;
+    const Matrix<3, 3, int> m {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    for (auto row : m.rows()) {
+        for (int elem : row) {
+            cout << elem << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
 
 //
 //    for (auto row : mat.rows()) {
