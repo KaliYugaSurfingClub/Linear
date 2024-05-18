@@ -6,10 +6,16 @@
 
 namespace Linear {
 
+    template<std::size_t M, std::size_t N, typename Field>
+    class Matrix;
+
     template<bool is_const, typename Iterator, typename Field, std::size_t VectorSize>
-    class MatrixRefBase {
+    class MatrixRefBase : public IVector<VectorSize, Field, Iterator> {
     public:
         using Vector = Vector<VectorSize, Field>;
+
+        MatrixRefBase &operator=(const MatrixRefBase &) = delete;
+        MatrixRefBase &operator=(const MatrixRefBase &&) = delete;
 
         const Field &operator[](std::size_t index) const requires is_const {
             return *std::next(begin_, index);
@@ -19,11 +25,29 @@ namespace Linear {
             return *std::next(begin_, index);
         }
 
-        Iterator begin() const {
+        template<typename OtherIterator>
+        void operator+=(const IVector<VectorSize, Field, OtherIterator> &vector) const requires (!is_const) {
+            std::transform(begin(), end(), vector.begin(), begin(), std::plus<Field>{});
+        }
+
+        template<typename OtherIterator>
+        void operator-=(const IVector<VectorSize, Field, OtherIterator> &vector) const requires (!is_const) {
+            std::transform(begin(), end(), vector.begin(), begin(), std::minus<Field>{});
+        }
+
+        void operator*=(const Field &scalar) const requires (!is_const) {
+            std::transform(begin(), end(), begin(), multiply_by_scalar(scalar));
+        }
+
+        void operator/=(const Field &scalar) const requires (!is_const) {
+            std::transform(begin(), end(), begin(), divide_by_scalar(scalar));
+        }
+
+        Iterator begin() const override {
             return begin_;
         }
 
-        Iterator end() const {
+        Iterator end() const override {
             return end_;
         }
 
@@ -50,13 +74,25 @@ namespace Linear {
             jump_iterator(ref.elems().end() + index, M),
             index
         ) {}
+
+        template<typename OtherIterator>
+        RowRef &operator=(const IVector<N, Field, OtherIterator> &vector) const {
+            std::copy(vector.begin(), vector.end(), this->begin());
+            return *this;
+        }
+
+        template<typename OtherIterator>
+        RowRef &operator=(const IVector<N, Field, OtherIterator> &vector) {
+            std::copy(vector.begin(), vector.end(), this->begin());
+            return *this;
+        }
     };
 
 
     template<std::size_t M, std::size_t N, typename Field>
-    class ConstRowRef : public MatrixRefBase<true, jump_iterator<typename Matrix<M, N, Field>::ConstElemIterator >, Field, N> {
+    class ConstRowRef : public MatrixRefBase<true, jump_iterator<typename Matrix<M, N, Field>::ConstElemIterator>, Field, N> {
 
-    using Base = MatrixRefBase<true, jump_iterator<typename Matrix<M, N, Field>::ConstElemIterator>, Field, N>;
+    using Base = MatrixRefBase<true, jump_iterator<typename Matrix<M, N, Field>::ConstElemIterator>, Field, N> ;
 
     public:
         ConstRowRef(const Matrix<M, N, Field> &ref, std::size_t index) : Base(
@@ -78,6 +114,19 @@ namespace Linear {
             ref.elems().begin() + index * M + M,
             index
         ) {}
+
+        //todo возможно лучше копирование от любого рэнжа
+        template<typename OtherIterator>
+        ColumnRef &operator=(const IVector<M, Field, OtherIterator> &vector) const {
+            std::copy(vector.begin(), vector.end(), this->begin());
+            return *this;
+        }
+
+        template<typename OtherIterator>
+        ColumnRef &operator=(const IVector<M, Field, OtherIterator> &vector) {
+            std::copy(vector.begin(), vector.end(), this->begin());
+            return *this;
+        }
     };
 
 

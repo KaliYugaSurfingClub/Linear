@@ -2,27 +2,63 @@
 
 #include "Matrix.h"
 #include "Ref.h"
-#include "Operator.h"
+#include "IVector.h"
 
 using namespace std;
 using namespace Linear;
 
+struct Test {
 
-void f( Matrix<3, 3, int> &m) {
-    *m.elems().begin() = 88;
-}
+    static void vec_oper() {
+        Matrix<3, 3, int> m {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        Vector<3, int> v3_1 {1, 2, 3};
+        Vector<3, int> v3_2 {1, 2, 3};
 
-template<typename T>
-void g(T ptr) {
-    cout << ptr << endl;
-}
+        auto v3_3 = v3_1 + v3_2;
+        auto v3_4 = v3_1 + m.column(0);
+        auto v3_5 = m.column(0) + v3_1;
+        auto v3_6 = m.column(0) + m.row(1);
+
+        if (v3_1 == m.column(0)) {}
+        if (m.row(0) == m.column(0)) {}
+
+        v3_1 += m.row(0);
+
+        auto s = scalar_product(m.row(1), m.row(2));
+    }
+
+};
+
 
 int main() {
+
+    Test::vec_oper();
+
+    Matrix<3, 3, int> mat {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    for (auto row : mat.rows()) {
+        row -= mat.row(0) * row[0];
+    }
+
+    auto ref = *mat.rows().begin();
+    ref = Vector<3, int>{};
+
+    std::for_each(mat.rows().begin(), mat.rows().end(), [&](auto ref) {
+        ref -= mat.row(0);
+    });
+
+
     Matrix<3, 5, int> m {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+
+    Vector<3, int> sdda{1, 2, 3};
+    Vector<3, int> asdasds{1, 2, 3};
+//    sdda += asdasds;
+
+//    auto assd = m * 8;
+//    auto sad = o *8;
 
     array<int, 3> a{0};
     auto i = next(a.begin(), 10);
-    g(i);
 
     vector v{1, 2, 3, 4, 5};
     copy(m.row(0).begin(), m.row(0).end(), m.row(1).begin());
@@ -63,6 +99,8 @@ int main() {
     Matrix<3, 3, int> m12{-2, 1, 2, 1, 3, 4, 1, -5, 5};
 
     cout << m12.det() << endl;
+
+    auto E = Matrix<3, 3, int>::identity() * Matrix<3, 3, int>::identity();
 
     auto mmm = Matrix<3, 3, int>::identity();
 

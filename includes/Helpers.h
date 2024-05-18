@@ -15,6 +15,13 @@ namespace Linear::Details {
     }
 
     template<typename T>
+    auto divide_by_scalar(const T &scalar) {
+        return [&scalar](const T &other) {
+            return other / scalar;
+        };
+    }
+
+    template<typename T>
     auto less_than(const T &scalar) {
         return [&scalar](const T &other) {
             return other < scalar;
@@ -37,25 +44,29 @@ namespace Linear::Details {
         return res;
     }
 
-    template<typename Iter>
+    template<typename Iterator>
     class Range {
     public:
-        Range(std::function<Iter()> &&begin, std::function<Iter()> &&end)
+        Range(std::function<Iterator()> &&begin, std::function<Iterator()> &&end)
         : begin_(begin), end_(end) {}
 
-        Iter begin() const {
+        Iterator begin() const {
             return begin_();
         }
 
-        Iter end() const {
+        Iterator end() const {
             return end_();
         }
 
     private:
-        std::function<Iter()> begin_;
-        std::function<Iter()> end_;
+        std::function<Iterator()> begin_;
+        std::function<Iterator()> end_;
     };
 
+}
+
+namespace Linear {
+    using namespace Details;
 }
 
 #endif //LINEAR_ALGEBRA_HELPERS_H
