@@ -10,7 +10,7 @@ namespace Linear {
 
     template<std::size_t M, std::size_t N, typename Field>
     class Matrix {
-
+    public:
         template<typename Ref>
         class Iterator {
         public:
@@ -330,12 +330,14 @@ namespace Linear {
 
 namespace std {
 
-//    template<std::size_t M, std::size_t N, typename Field>
-//    struct iterator_traits<Linear::Matrix<M, N, Field>::ElemIterator> {
-//        using value_type = Linear::Matrix<M, N, Field>::ElemIterator::value_type;
-//        using iterator_category = Linear::jump_iterator<Iter>::iterator_category;
-//        using difference_type = Linear::jump_iterator<Iter>::difference_type;
-//    };
+    template<>
+    struct iterator_traits<Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> > > {
+        using value_type = Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> >::value_type;
+        using pointer = void;
+        using reference = Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3>;
+        using iterator_category = Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> >::iterator_category;
+        using difference_type = Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> >::difference_type;
+    };
 
 }
 

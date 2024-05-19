@@ -6,6 +6,7 @@ using namespace std;
 using namespace Linear;
 
 //todo swap
+//todo поддержка адаптеров, и алгоритмов, проблемы с jump_iterator
 
 struct Test {
 
@@ -68,7 +69,7 @@ struct Test {
             }
         });
 
-        std::for_each(reverse_iterator(m.rows().begin()), m.rows().end(), [](auto r) {
+        std::for_each(reverse_iterator(m.rows().end()), reverse_iterator(m.rows().begin()), [](auto r) {
             cout << 123;
         });
 
