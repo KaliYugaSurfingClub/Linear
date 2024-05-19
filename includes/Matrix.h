@@ -9,46 +9,37 @@
 namespace Linear {
 
     template<std::size_t M, std::size_t N, typename Field>
-    class ColumnRef;
-
-    template<std::size_t M, std::size_t N, typename Field>
-    class ConstColumnRef;
-
-    template<std::size_t M, std::size_t N, typename Field>
-    class RowRef;
-
-    template<std::size_t M, std::size_t N, typename Field>
-    class ConstRowRef;
-
-
-    template<std::size_t M, std::size_t N, typename Field>
-    class Matrix : public BaseAlgebraStruct<Matrix<M, N, Field>, M * N, Field> {
-
-        using Base = BaseAlgebraStruct<Matrix<M, N, Field>, M * N, Field>;
-
+    class Matrix {
+    public:
         template<typename Ref>
-        class MatrixIterator {
+        class Iterator {
         public:
             using iterator_category = std::random_access_iterator_tag;
             using difference_type = std::ptrdiff_t;
             using value_type = Ref;
 
-            MatrixIterator(Matrix &matrix, std::size_t index) : index_(index), matrix_(matrix) {}
+            Iterator(const Matrix &matrix, std::size_t index)
+            : matrix_(const_cast<Matrix &>(matrix)), index_(index) {}
 
-            bool operator!=(const MatrixIterator &other) const {
+            bool operator!=(const Iterator &other) const {
                 return index_ != other.index_;
             }
 
-            bool operator==(const MatrixIterator &other) const {
+            bool operator==(const Iterator &other) const {
                 return index_ == other.index_;
             }
 
-            difference_type operator-(const MatrixIterator &other) {
+            difference_type operator-(const Iterator &other) {
                 return index_ - other.index_;
             }
 
-            MatrixIterator &operator++() {
+            Iterator &operator++() {
                 ++index_;
+                return *this;
+            }
+
+            Iterator &operator--() {
+                --index_;
                 return *this;
             }
 
@@ -61,49 +52,131 @@ namespace Linear {
             std::size_t index_;
         };
 
+        template<bool is_const, typename Iterator, std::size_t VectorSize>
+        class Ref : public IVector<VectorSize, Field, Iterator> {
+        public:
+            Ref(const Matrix &const_matrix, std::size_t index) {
+                auto &mut_matrix = const_cast<Matrix &>(const_matrix);
+
+                if constexpr (std::is_same_v<Iterator, ConstElemIterator>) {
+                    begin_ = const_matrix.elems().begin() + index * M,
+                    end_ = const_matrix.elems().begin() + index * M + M;
+                }
+                else if constexpr (std::is_same_v<Iterator, jump_iterator<ConstElemIterator>>) {
+                    begin_ = jump_iterator(const_matrix.elems().begin() + index, M);
+                    end_ = jump_iterator(const_matrix.elems().end() + index, M);
+                }
+                else if constexpr (std::is_same_v<Iterator, ElemIterator>) {
+                    begin_ = mut_matrix.elems().begin() + index * M,
+                    end_ = mut_matrix.elems().begin() + index * M + M;
+                }
+                else if constexpr (std::is_same_v<Iterator, jump_iterator<ElemIterator>>) {
+                    begin_ = jump_iterator(mut_matrix.elems().begin() + index, M);
+                    end_ = jump_iterator(mut_matrix.elems().end() + index, M);
+                }
+            }
+
+            template<typename OtherIterator>
+            const Ref &operator=(const IVector<VectorSize, Field, OtherIterator> &vector) const requires (!is_const) {
+                std::copy(vector.begin(), vector.end(), this->begin());
+                return *this;
+            }
+
+            const Ref &operator=(const Ref &ref) const requires (!is_const) {
+                std::copy(ref.begin(), ref.end(), this->begin());
+                return *this;
+            }
+
+            const Field &operator[](std::size_t index) const requires is_const {
+                return *std::next(begin_, index);
+            }
+
+            Field &operator[](std::size_t index) const requires (!is_const) {
+                return *std::next(begin_, index);
+            }
+
+            template<typename OtherIterator>
+            void operator+=(const IVector<VectorSize, Field, OtherIterator> &vector) const requires (!is_const) {
+                std::transform(begin(), end(), vector.begin(), begin(), std::plus<Field>{});
+            }
+
+            template<typename OtherIterator>
+            void operator-=(const IVector<VectorSize, Field, OtherIterator> &vector) const requires (!is_const) {
+                std::transform(begin(), end(), vector.begin(), begin(), std::minus<Field>{});
+            }
+
+            void operator*=(const Field &scalar) const requires (!is_const) {
+                std::for_each(begin(), end(), [&](Field &item) { item *= scalar; });
+            }
+
+            void operator/=(const Field &scalar) const requires (!is_const) {
+                std::for_each(begin(), end(), [&](Field &item) { item *= scalar; });
+            }
+
+            Iterator begin() const override {
+                return begin_;
+            }
+
+            Iterator end() const override {
+                return end_;
+            }
+
+        protected:
+            Iterator begin_;
+            Iterator end_;
+        };
+
     public:
-        using value_type = Field;
+        using data_type = std::array<Field, M * N>;
 
-        using ColumnIterator = MatrixIterator<ColumnRef<M, N, Field>>;
-        using RowIterator = MatrixIterator<RowRef<M, N, Field>>;
+        using ElemIterator = data_type::iterator;
+        using ConstElemIterator = data_type::const_iterator;
 
-        using ConstColumnIterator = MatrixIterator<ConstColumnRef<M, N, Field>>;
-        using ConstRowIterator = MatrixIterator<ConstRowRef<M, N, Field>>;
+        using ColumnRef = Ref<false, ElemIterator, M>;
+        using ConstColumnRef = Ref<true, ConstElemIterator, M>;
 
-        using Base::Base;
+        using ColumnIterator = Iterator<ColumnRef>;
+        using ConstColumnIterator = Iterator<ConstColumnRef>;
+
+        using RowRef = Ref<false, jump_iterator<ElemIterator>, N>;
+        using ConstRowRef = Ref<true, jump_iterator<ConstElemIterator>, N>;
+
+        using RowIterator = Iterator<RowRef>;
+        using ConstRowIterator = Iterator<ConstRowRef>;
+
+        Matrix() = default;
+
+        template<typename Iter>
+        Matrix(Iter begin, Iter end) {
+            if (std::distance(begin, end) != M * N) {
+                throw std::invalid_argument("too many or too few arguments in matrix");
+            }
+            std::copy(begin, end, data_.begin());
+        }
 
         Matrix(std::initializer_list<Vector<M, Field>> list) {
             if (list.size() != N) {
                 throw std::invalid_argument("too many or too few columns");
             }
 
-            auto back_it = Base::data_.begin();
+            auto back_it = data_.begin();
             for (auto it = list.begin(); it != list.end(); ++it) {
                 std::ranges::copy(*it, back_it);
                 back_it = std::next(back_it, M);
             }
         }
 
+        Matrix(std::initializer_list<Field> list) : Matrix(list.begin(), list.end()) {}
+
+        template<typename Range>
+        explicit Matrix(const Range &range) : Matrix(std::begin(range), std::end(range)) {}
+
+        explicit Matrix(const Field &value) : data_{value} {}
+
         static Matrix<M, M, Field> identity() {
             Matrix<M, M, Field> res;
             std::fill_n(jump_iterator(res.elems().begin(), M + 1), M, 1);
             return res;
-        }
-
-        ColumnRef<M, N, Field> column(std::size_t index) {
-            return {*this, index};
-        }
-
-        ConstColumnRef<M, N, Field> column(std::size_t index) const {
-            return {*this, index};
-        }
-
-        RowRef<M, N, Field> row(std::size_t index) {
-            return {*this, index};
-        }
-
-        ConstRowRef<M, N, Field> row(std::size_t index) const {
-            return {*this, index};
         }
 
         const Field &operator()(std::size_t i, std::size_t j) const {
@@ -112,7 +185,7 @@ namespace Linear {
                 throw std::invalid_argument("invalid argument (i, j)");
             }
 
-            return Base::data_[index];
+            return data_[index];
         }
 
         Field &operator()(std::size_t i, std::size_t j) {
@@ -120,46 +193,96 @@ namespace Linear {
             return const_cast<Field &>(ref);
         }
 
-        auto elems() {
-            return Range<typename Base::iterator>(
-                    [&] { return Base::data_.begin(); },
-                    [&] { return Base::data_.end(); }
-            );
+        ColumnRef column(std::size_t index) {
+            return {*this, index};
         }
 
-        auto elems() const {
-            return Range<typename Base::const_iterator>(
-                    [&] { return Base::data_.cbegin(); },
-                    [&] { return Base::data_.cend(); }
-            );
+        RowRef row(std::size_t index) {
+            return {*this, index};
         }
 
-        auto rows() {
-            return Range<RowIterator>(
-                    [&] { return RowIterator(*this, 0); },
-                    [&] { return RowIterator(*this, M); }
-            );
+        ConstColumnRef column(std::size_t index) const {
+            return {*this, index};
         }
 
-        auto rows() const {
-            return Range<ConstRowIterator>(
-                    [&] { return ConstRowIterator(*this, 0); },
-                    [&] { return ConstRowIterator(*this, M); }
-            );
+        ConstRowRef row(std::size_t index) const {
+            return {*this, index};
         }
 
-        auto columns() {
-            return Range<ColumnIterator>(
-                    [&] { return ColumnIterator(*this, 0); },
-                    [&] { return ColumnIterator(*this, N); }
-            );
+        ConstColumnRef const_column(std::size_t index) {
+            return {*this, index};
         }
 
-        auto columns() const {
-            return Range<ConstColumnIterator>(
-                    [&] { return ConstColumnIterator(*this, 0); },
-                    [&] { return ConstColumnIterator(*this, N); }
-            );
+        ConstRowRef const_row(std::size_t index) {
+            return {*this, index};
+        }
+
+        Range<ElemIterator> elems() {
+            return {
+                [&] { return data_.begin(); },
+                [&] { return data_.end(); }
+            };
+        }
+
+        Range<RowIterator> rows() {
+            return {
+                [&] { return RowIterator(*this, 0); },
+                [&] { return RowIterator(*this, M); }
+            };
+        }
+
+        Range<ColumnIterator> columns() {
+            return {
+                [&] { return ColumnIterator(*this, 0); },
+                [&] { return ColumnIterator(*this, N); }
+            };
+        }
+
+        Range<ConstElemIterator> elems() const {
+            return {
+                [&] { return data_.cbegin(); },
+                [&] { return data_.cend(); }
+            };
+        }
+
+        Range<ConstRowIterator> rows() const {
+            return {
+                [&] { return ConstRowIterator(*this, 0); },
+                [&] { return ConstRowIterator(*this, M); }
+            };
+        }
+
+        Range<ConstColumnIterator> columns() const {
+            return {
+                [&] { return ConstColumnIterator(*this, 0); },
+                [&] { return ConstColumnIterator(*this, N); }
+            };
+        }
+
+        Range<ConstElemIterator> const_elems() {
+            return const_cast<const Matrix &>(*this).elems();
+        }
+
+        Range<ConstRowIterator> const_rows() {
+            return const_cast<const Matrix &>(*this).rows();
+        }
+
+        Range<ConstColumnIterator> const_columns() {
+            return const_cast<const Matrix &>(*this).columns();
+        }
+
+        template<std::size_t K>
+        Matrix<M, K, Field> operator*(const Matrix<N, K, Field> &left) const {
+            Matrix<M, N, Field> res;
+            auto it = res.elems().begin();
+
+            for (auto col_ref : left.columns()) {
+                for (auto row_ref : this->rows()) {
+                    *it++ = scalar_product(Vector<K, Field>{col_ref}, Vector<M, Field>{row_ref});
+                }
+            }
+
+            return res;
         }
 
         Field det() const requires (M == N) {
@@ -178,24 +301,44 @@ namespace Linear {
             return res;
         }
 
-        template<std::size_t K>
-        Matrix<M, K, Field> operator*(const Matrix<N, K, Field> &left) {
-            Matrix<M, N, Field> res;
-            auto it = res.elems().begin();
-
-            for (auto col_ref : left.columns()) {
-                for (auto row_ref : rows()) {
-                    *it = scalar_product(Vector<K, Field>{col_ref}, Vector<M, Field>{row_ref});
-                    ++it;
-                }
-            }
-
-            return res;
-        }
+    private:
+        data_type data_{Field{0}};
     };
 
 //    template<std::size_t M, typename Field, typename ...Args>
 //    Matrix(Vector<M, Field>, Args...) -> Matrix<M, sizeof...(Args) + 1, Field>;
+
+    //updet for MxN + KxN + ... +
+    template<std::size_t M, std::size_t N, std::size_t K, typename Field>
+    auto join_matrices(const Matrix<M, N, Field> &right, const Matrix<M, K, Field> &left) {
+        Matrix<M, N + K, Field> res;
+        std::copy_n(right.elems().begin(), M * N, res.elems().begin());
+        std::copy_n(left.elems().begin() + M * N, M * K, res.elems().begin());
+        return res;
+    }
+
+    template<std::size_t N, typename Field>
+    auto invert(const Matrix<N, N, Field> &matrix) {
+        Matrix<N, N * 2, Field> augmented = join_matrices(matrix, Matrix<N, N, Field>::identity());
+
+        augmented.row(0) /= augmented(0, 0);
+        std::ranges::for_each(augmented.rows(), [&](auto &vector) { vector -= augmented.row(0); });
+
+        return;
+    }
+}
+
+namespace std {
+
+    template<>
+    struct iterator_traits<Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> > > {
+        using value_type = Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> >::value_type;
+        using pointer = void;
+        using reference = Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3>;
+        using iterator_category = Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> >::iterator_category;
+        using difference_type = Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> >::difference_type;
+    };
+
 }
 
 #endif //LINER_ALGEBRA_MATRIX_H

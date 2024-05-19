@@ -2,18 +2,19 @@
 #define LINEAR_ALGEBRA_JUMP_ITERATOR_H
 
 #include "iterator"
-#include "BaseAlgebraStruct.h"
 
-namespace Linear::Details {
+namespace Linear {
 
-    template<typename Iter>
+    template<typename Pointer>
     class jump_iterator {
     public:
-        using value_type = Iter::value_type;
+        using value_type = std::remove_pointer_t<Pointer>;
         using iterator_category = std::random_access_iterator_tag;
-        using difference_type = Iter::difference_type;
+        using difference_type = std::ptrdiff_t;
 
-        jump_iterator(Iter it, std::size_t jump_len)
+        jump_iterator() = default;
+
+        jump_iterator(Pointer it, std::size_t jump_len)
         : it_(it), jump_len_(jump_len) {}
 
         value_type &operator*() const {
@@ -25,8 +26,8 @@ namespace Linear::Details {
             return *this;
         }
 
-        jump_iterator &operator+=(std::size_t n) {
-            it_ = std::next(it_, jump_len_);
+        jump_iterator &operator+=(difference_type n) {
+            it_ = std::next(it_, jump_len_ * n);
             return *this;
         }
 
@@ -35,12 +36,12 @@ namespace Linear::Details {
             return *this;
         }
 
-        jump_iterator operator+(std::size_t n) {
+        jump_iterator operator+(difference_type n) {
             return {std::next(it_, n * jump_len_), jump_len_};
         }
 
         difference_type operator-(jump_iterator other) {
-            return (it_ - other.it_) / jump_len_;
+            return std::distance(other.it_, it_) / jump_len_;
         }
 
         bool operator!=(jump_iterator other) const {
@@ -52,8 +53,8 @@ namespace Linear::Details {
         }
 
     private:
-        Iter it_;
-        std::size_t jump_len_;
+        Pointer it_ = nullptr;
+        std::size_t jump_len_ = 0;
     };
 
 }

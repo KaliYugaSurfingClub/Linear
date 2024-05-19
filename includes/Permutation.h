@@ -6,11 +6,10 @@
 namespace Linear {
 
     class PermutationsStorage {
-
-    using permutation_t = std::pair<short, std::vector<std::size_t>>;
-    using perms_with_same_len = std::vector<permutation_t>;
-
     public:
+        using permutation_t = std::pair<short, std::vector<std::size_t>>;
+        using perms_with_same_len = std::vector<permutation_t>;
+
         static perms_with_same_len get(std::size_t len) {
             if (permutations_.find(len) == permutations_.end()) {
                 fill(len);
