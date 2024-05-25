@@ -12,12 +12,8 @@ namespace Linear {
     class Matrix {
     public:
         template<typename Ref>
-        class Iterator {
+        class Iterator : public std::iterator<std::random_access_iterator_tag, Ref> {
         public:
-            using iterator_category = std::random_access_iterator_tag;
-            using difference_type = std::ptrdiff_t;
-            using value_type = Ref;
-
             Iterator(const Matrix &matrix, std::size_t index)
             : matrix_(const_cast<Matrix &>(matrix)), index_(index) {}
 
@@ -29,7 +25,7 @@ namespace Linear {
                 return index_ == other.index_;
             }
 
-            difference_type operator-(const Iterator &other) {
+            ptrdiff_t operator-(const Iterator &other) {
                 return index_ - other.index_;
             }
 
@@ -328,17 +324,5 @@ namespace Linear {
     }
 }
 
-namespace std {
-
-    template<>
-    struct iterator_traits<Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> > > {
-        using value_type = Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> >::value_type;
-        using pointer = void;
-        using reference = Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3>;
-        using iterator_category = Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> >::iterator_category;
-        using difference_type = Linear::Matrix<3, 3, int>::Iterator<Linear::Matrix<3, 3, int>::Ref<false, Linear::jump_iterator<int*>, 3> >::difference_type;
-    };
-
-}
 
 #endif //LINER_ALGEBRA_MATRIX_H

@@ -49,7 +49,7 @@ struct Test {
 
         v3_1 += m.row(0);
 
-        auto s = scalar_product(m.row(1), m.row(2));
+        auto s = scalar_product(m.row(1), m.column(2));
 
         m.row(0) = Vector{1, 2, 3};
         m.row(0) = m.column(1);
