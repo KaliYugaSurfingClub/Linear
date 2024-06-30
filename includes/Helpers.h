@@ -8,6 +8,20 @@
 namespace Linear {
 
     template<typename T>
+    auto multiply_by_scalar(const T &scalar) {
+        return [&scalar](const T &other) {
+            return scalar * other;
+        };
+    }
+
+    template<typename T>
+    auto divide_by_scalar(const T &scalar) {
+        return [&scalar](const T &other) {
+            return other / scalar;
+        };
+    }
+
+    template<typename T>
     auto less_than(const T &scalar) {
         return [&scalar](const T &other) {
             return other < scalar;

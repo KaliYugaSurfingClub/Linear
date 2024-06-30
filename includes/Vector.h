@@ -7,6 +7,8 @@
 #include <numeric>
 #include <utility>
 
+#include "Helpers.h"
+
 namespace Linear {
 
     template<std::size_t M, typename Field>

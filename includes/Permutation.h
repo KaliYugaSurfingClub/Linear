@@ -8,9 +8,8 @@ namespace Linear {
     class PermutationsStorage {
     public:
         using permutation_t = std::pair<short, std::vector<std::size_t>>;
-        using perms_with_same_len = std::vector<permutation_t>;
 
-        static perms_with_same_len get(std::size_t len) {
+        static std::vector<permutation_t> get(std::size_t len) {
             if (permutations_.find(len) == permutations_.end()) {
                 fill(len);
             }
@@ -19,10 +18,10 @@ namespace Linear {
         }
 
     private:
-        static inline std::unordered_map<std::size_t, perms_with_same_len> permutations_;
+        static inline std::unordered_map<std::size_t, std::vector<permutation_t>> permutations_;
 
         static void fill(std::size_t len) {
-            permutations_[len] = perms_with_same_len{factorial(len)};
+            permutations_[len] = std::vector<permutation_t>{factorial(len)};
 
             std::vector<std::size_t> current_permutation(len);
             std::ranges::iota(current_permutation, 0);

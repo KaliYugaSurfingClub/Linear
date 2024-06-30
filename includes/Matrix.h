@@ -12,7 +12,7 @@ namespace Linear {
     class Matrix {
     public:
         template<typename Ref>
-        class Iterator : public std::iterator<std::random_access_iterator_tag, Ref> {
+        class Iterator : public std::iterator<std::random_access_iterator_tag, Ref, std::ptrdiff_t, Ref, Ref> {
         public:
             Iterator(const Matrix &matrix, std::size_t index)
             : matrix_(const_cast<Matrix &>(matrix)), index_(index) {}
@@ -25,13 +25,21 @@ namespace Linear {
                 return index_ == other.index_;
             }
 
-            ptrdiff_t operator-(const Iterator &other) {
+            bool operator<(const Iterator &other) const {
+                return index_ < other.index_;
+            }
+
+            std::ptrdiff_t operator-(const Iterator &other) {
                 return index_ - other.index_;
             }
 
             Iterator &operator++() {
                 ++index_;
                 return *this;
+            }
+
+            Iterator operator+(std::ptrdiff_t n) {
+                return {matrix_, index_ + n};
             }
 
             Iterator &operator--() {
@@ -106,7 +114,7 @@ namespace Linear {
             }
 
             void operator/=(const Field &scalar) const requires (!is_const) {
-                std::for_each(begin(), end(), [&](Field &item) { item *= scalar; });
+                std::for_each(begin(), end(), [&](Field &item) { item /= scalar; });
             }
 
             Iterator begin() const override {
@@ -274,7 +282,7 @@ namespace Linear {
 
             for (auto col_ref : left.columns()) {
                 for (auto row_ref : this->rows()) {
-                    *it++ = scalar_product(Vector<K, Field>{col_ref}, Vector<M, Field>{row_ref});
+                    *it++ = scalar_product(col_ref, row_ref);
                 }
             }
 
@@ -286,7 +294,7 @@ namespace Linear {
 
             Field res = 0;
 
-            for (auto &[sign, permutation]: all_permutations) {
+            for (auto &[sign, permutation] : all_permutations) {
                 Field curr_product = sign;
                 for (std::size_t i = 0; i < permutation.size(); ++i) {
                     curr_product *= (*this)(i, permutation[i]);
@@ -309,7 +317,7 @@ namespace Linear {
     auto join_matrices(const Matrix<M, N, Field> &right, const Matrix<M, K, Field> &left) {
         Matrix<M, N + K, Field> res;
         std::copy_n(right.elems().begin(), M * N, res.elems().begin());
-        std::copy_n(left.elems().begin() + M * N, M * K, res.elems().begin());
+        std::copy_n(left.elems().begin(), M * K, res.elems().begin() + M * N);
         return res;
     }
 
@@ -317,10 +325,18 @@ namespace Linear {
     auto invert(const Matrix<N, N, Field> &matrix) {
         Matrix<N, N * 2, Field> augmented = join_matrices(matrix, Matrix<N, N, Field>::identity());
 
-        augmented.row(0) /= augmented(0, 0);
-        std::ranges::for_each(augmented.rows(), [&](auto &vector) { vector -= augmented.row(0); });
+        for (std::size_t i = 0; i < N; ++i) {
+            Field for_divide = augmented(i, i);
+            augmented.row(i) /= for_divide;
+            std::for_each(augmented.rows().begin() + 1 + i, augmented.rows().end(), [&](auto row_ref) {
+                Field for_mult = row_ref[i];
+                row_ref -= augmented.row(i) * for_mult;
+            });
+        }
 
-        return;
+        std::reverse(augmented.columns().begin(), augmented.columns().begin() + N);
+
+        return augmented;
     }
 }
 

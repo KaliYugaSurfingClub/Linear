@@ -19,7 +19,6 @@ struct Test {
         Matrix<3, 3, int>::RowRef ref1 = m.row(1);
         ref = ref1 = Vector{1, 2, 3};
 
-
         m.column(1) += Vector{1, 2, 3} + m.row(1);
         m.column(1) *= 10;
 
@@ -90,12 +89,21 @@ int main() {
 
     vector<int> v;
 
-    Test::vec_oper();
-
-    const Matrix<3, 3, int> m {1, 2, 3, 4, 5, 6, 7, 8, 9};
+//    Test::vec_oper();
+    const Matrix<3, 3, double> m {0.5, 2, 3, 4, 5, 6, 7, 8, 9};
 
     for (auto row : m.rows()) {
-        for (int elem : row) {
+        for (double elem : row) {
+            cout << elem << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+    auto mm = invert(m);
+
+    for (auto row : mm.rows()) {
+        for (auto elem : row) {
             cout << elem << " ";
         }
         cout << endl;
