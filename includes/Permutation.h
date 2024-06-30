@@ -18,8 +18,6 @@ namespace Linear {
         }
 
     private:
-        static inline std::unordered_map<std::size_t, std::vector<permutation_t>> permutations_;
-
         static void fill(std::size_t len) {
             permutations_[len] = std::vector<permutation_t>{factorial(len)};
 
@@ -38,6 +36,8 @@ namespace Linear {
                 std::ranges::next_permutation(current_permutation);
             }
         }
+
+        static inline std::unordered_map<std::size_t, std::vector<permutation_t>> permutations_;
     };
 
 }

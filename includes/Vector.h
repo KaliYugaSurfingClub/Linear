@@ -57,6 +57,7 @@ namespace Linear {
         virtual Iterator end() const = 0;
 
     protected:
+        IVector() = default;
         virtual ~IVector() = default;
     };
 
@@ -70,6 +71,13 @@ namespace Linear {
 
         Vector() = default;
 
+        Vector(std::initializer_list<Field> list) : Vector(list.begin(), list.end()) {}
+
+        template<typename Range>
+        explicit Vector(const Range &range) : Vector(std::begin(range), std::end(range)) {}
+
+        explicit Vector(const Field &value) : data_{value} {}
+
         template<typename Iter>
         Vector(Iter begin, Iter end) {
             if (std::distance(begin, end) != M) {
@@ -77,13 +85,6 @@ namespace Linear {
             }
             std::copy(begin, end, data_.begin());
         }
-
-        Vector(std::initializer_list<Field> list) : Vector(list.begin(), list.end()) {}
-
-        template<typename Range>
-        explicit Vector(const Range &range) : Vector(std::begin(range), std::end(range)) {}
-
-        explicit Vector(const Field &value) : data_{value} {}
 
         template<typename OtherIterator>
         Vector &operator=(const IVector<M, Field, OtherIterator> &vector) {

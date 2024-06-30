@@ -275,42 +275,40 @@ namespace Linear {
             return const_cast<const Matrix &>(*this).columns();
         }
 
-        template<std::size_t K>
-        Matrix<M, K, Field> operator*(const Matrix<N, K, Field> &left) const {
-            Matrix<M, N, Field> res;
-            auto it = res.elems().begin();
-
-            for (auto col_ref : left.columns()) {
-                for (auto row_ref : this->rows()) {
-                    *it++ = scalar_product(col_ref, row_ref);
-                }
-            }
-
-            return res;
-        }
-
-        Field det() const requires (M == N) {
-            const auto &all_permutations = PermutationsStorage::get(M);
-
-            Field res = 0;
-
-            for (auto &[sign, permutation] : all_permutations) {
-                Field curr_product = sign;
-                for (std::size_t i = 0; i < permutation.size(); ++i) {
-                    curr_product *= (*this)(i, permutation[i]);
-                }
-                res += curr_product;
-            }
-
-            return res;
-        }
-
     private:
         data_type data_{Field{0}};
     };
 
-//    template<std::size_t M, typename Field, typename ...Args>
-//    Matrix(Vector<M, Field>, Args...) -> Matrix<M, sizeof...(Args) + 1, Field>;
+    template<std::size_t N, typename Field>
+    Field det(const Matrix<N, N, Field> &matrix) {
+        const auto &all_permutations = PermutationsStorage::get(N);
+
+        Field res = 0;
+
+        for (auto &[sign, permutation] : all_permutations) {
+            Field permutation_product = sign;
+            for (std::size_t i = 0; i < permutation.size(); ++i) {
+                permutation_product *= matrix(i, permutation[i]);
+            }
+            res += permutation_product;
+        }
+
+        return res;
+    }
+
+    template<std::size_t M, std::size_t N, std::size_t K, typename Field>
+    Matrix<M, K, Field> operator*(const Matrix<M, N, Field> &left, const Matrix<N, K, Field> &right) {
+        Matrix<M, N, Field> res;
+        auto it = res.elems().begin();
+
+        for (auto col_ref : left.columns()) {
+            for (auto row_ref : right.rows()) {
+                *it++ = scalar_product(col_ref, row_ref);
+            }
+        }
+
+        return res;
+    }
 
     //updet for MxN + KxN + ... +
     template<std::size_t M, std::size_t N, std::size_t K, typename Field>
@@ -321,6 +319,7 @@ namespace Linear {
         return res;
     }
 
+    //dont work
     template<std::size_t N, typename Field>
     auto invert(const Matrix<N, N, Field> &matrix) {
         Matrix<N, N * 2, Field> augmented = join_matrices(matrix, Matrix<N, N, Field>::identity());
@@ -334,7 +333,7 @@ namespace Linear {
             });
         }
 
-        std::reverse(augmented.columns().begin(), augmented.columns().begin() + N);
+//        std::reverse(augmented.columns().begin(), augmented.columns().begin() + N);
 
         return augmented;
     }
