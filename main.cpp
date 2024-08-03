@@ -1,6 +1,8 @@
 #include "bits/stdc++.h"
 
 #include "Matrix.h"
+#include "fraction.h"
+#include "TESTS.h"
 
 using namespace std;
 using namespace Linear;
@@ -10,9 +12,9 @@ using namespace Linear;
 
 
 int main() {
-    Matrix<2, 2, int> m = {1, 3, 2, 4};
-    Matrix<2, 4, int> m1 = invert(m);
 
+    auto r = signum(-10u);
+    cout << r << endl;
 
     return 0;
 }
